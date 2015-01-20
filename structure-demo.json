@@ -1,0 +1,31 @@
+{
+  "first_path_1": {
+    "title": "一级目录-1",
+    "subElems": {
+      "second_file_1_1": {"title": "二级文件-1-1"},
+      "second_file_1_2": {"title": "二级文件-1-2"},
+      "second_file_1_3": {"title": "二级文件-1-3"}
+    }
+  },
+  "first_file_1": {
+    "title": "一级文件-1"
+  },
+  "first_path_2": {
+    "title": "一级目录-2",
+    "subElems": {
+      "second_file_2_1": {"title": "二级文件-2-1"},
+      "second_file_2_2": {"title": "二级文件-2-2"},
+      "second_path_2_1": {
+        "title": "二级目录-2-1",
+        "subElems": {
+          "third_file_2_1_1": {"title": "三级文件-1-1"},
+          "third_file_2_1_2": {"title": "三级级文件-1-2"},
+          "third_file_2_1_3": {"title": "三级文件-1-3"}
+        }
+      }
+    }
+  },
+  "first_file_2": {
+    "title": "一级文件-2"
+  }
+}

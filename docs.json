@@ -1,0 +1,10 @@
+{
+    "phpDesign": {
+        "title": "设计模式",
+        "description": "设计模式相关知识汇总" 
+    },    
+    "tool": {
+      "title": "工具文档",
+      "description": "开发或学习过程中使用到的辅助性"
+    }
+}

@@ -1,0 +1,8 @@
+{
+  "innodb_myisam": {
+    "title": "InnoDB还是MyISAM"
+  },
+  "performance_monitor": {
+    "title": "MySQL性能监控"
+  }
+}

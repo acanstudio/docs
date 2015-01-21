@@ -1,7 +1,27 @@
 {
-    "phpDesign": {
+    "design": {
         "title": "设计模式",
         "description": "设计模式相关知识汇总" 
+    },    
+    "structure_algorithm": {
+        "title": "数据结构和算法",
+        "description": "汇集了数据结构和算法的基本概念，以及一些典型的应用场景" 
+    },    
+    "shell_program": {
+        "title": "Shell编程",
+        "description": "服务器端shell编程" 
+    },    
+    "mysql": {
+        "title": "MySQL使用手记",
+        "description": "MySQL知识荟萃" 
+    },    
+    "senior": {
+        "title": "PHP高级编程",
+        "description": "PHP编程进阶" 
+    },    
+    "web_structure": {
+        "title": "Web架构",
+        "description": "Web架构" 
     },    
     "tool": {
       "title": "工具文档",

@@ -1,0 +1,40 @@
+{
+  "principle": {
+    "title": "程序设计原则",
+    "subElems": {
+      "DI": {"title": "依赖倒置原则"},
+      "ISP": {"title": "接口隔离原则"},
+      "LOD": {"title": "迪米特法则"},
+      "LSP": {"title": "里氏替换原则"},
+      "OCP": {"title": "开放封闭原则"},
+      "SPR": {"title": "单一职责原则"}
+    }
+  },
+  "designPattern": {
+    "title": "设计模式",
+    "subElems": {
+      "adapter": {"title": "适配器模式"},
+      "bridge": {"title": "桥接模式"},
+      "builder": {"title": "建造者模式"},
+      "command": {"title": "命令模式"},
+      "composite": {"title": "组合模式"},
+      "decorator": {"title": "装饰模式"},
+      "facade": {"title": "门面模式"},
+      "factory": {"title": "抽象工厂模式"},
+      "factoryMethod": {"title": "工厂模式"},
+      "flyweight": {"title": "享元模式"},
+      "memento": {"title": "备忘录模式"},
+      "observer": {"title": "观察者模式"},
+      "prototype": {"title": "原型模式"},
+      "proxy": {"title": "代理模式"},
+      "singleton": {"title": "单例模式"},
+      "state": {"title": "状态模式"},
+      "strategy": {"title": "策略模式"},
+      "template": {"title": "模板方法模式"},
+      "visitor": {"title": "访问者模式"}
+    }
+  },
+  "index": {
+    "title": "设计原则和模式概述"
+  }
+}

@@ -1,12 +1,13 @@
 {
     "docs_directory": "docs",
-    "valid_markdown_extensions": ["md", "markdown"],
+    "valid_extensions": [".md", ".markdown", ".rst"],
 
-    "title": "My Project",
-    "tagline": "My Stylish Documentation",
-    "author": "I, Me & Myself",
+    "title": "MyDocuments",
+    "tagline": "Documentation",
+    "author": "acanstudio",
     "image": "",
-    "theme": "daux-blue",
+    "github": "",
+    "theme": "navy",
     "breadcrumbs": false,
     "template": "default",
     "clean_urls": false,
@@ -16,15 +17,16 @@
     "file_editor": false,
     "repo": "",
     "twitter": [],
-    "google_analytics": "",
     "timezone": "America/Los_Angeles",
-    "piwik_analytics": false,
-    "piwik_analytics_id": "0",
     "languages": {},
     "ignore": {
         "files": [],
         "folders": []
     },    
     "links": {
+      "http://github.com/acanstudio/docs": "Github地址"
+    },
+    "thirds": {
+      "github": ""
     }
 }

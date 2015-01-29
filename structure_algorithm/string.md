@@ -187,5 +187,112 @@ int Index_KMP(String S, String T, int pos)
 }
 </pre>
 
+KMP模式匹配PHP版
+<pre>
+<?php
+function indexOf($target, $pattern, $start)
+{  
+    $result = false;
+    $targetLen = strlen($target);
+    $patternLen = strlen($pattern);
+    if (empty($target) || empty($pattern) || $targetLen < $patternLen) {
+        return $result;
+    }
+
+    echo "t-:$target<br/>\np-:$pattern<br/>\n";  
+    $i = $start;  
+    $j = 0;  
+    $next = getNext($pattern);  
+
+    while ($i < $targetLen) {  
+        for ($k = 0; $k < $targetLen; $k++) {
+            echo $target{$k} . '|';
+        }
+        echo "<br />\n";
+
+        if ($jrollback) {
+            for ($k = 0; $k < $i - $j; $k++) {
+                echo 'x|';
+            }
+        }
+        for ($k = 0; $k <= $j; $k++) {
+            echo $pattern{$k} . '|';
+        }
+
+        if ($j == -1 || $target{$i} == $pattern{$j}) {  
+            $i++;
+            $j++;    
+        } else {
+            $jrollback = true;
+            $j = $next[$j];  
+        }
+        echo "-------------------------------------------------i:$i,j:$j<br/>\n";  
+        if ($j==strlen($pattern)) {
+            $result = $i - $j;
+            break;
+        }
+    }  
+  
+    return $result;  
+}  
+  
+// 获取模式串的next数组的函数  
+function getNext($string)
+{  
+    $i=0;
+    $j=-1;   
+    $next[0] = -1;  
+  
+    while ($i < strlen($string) - 1) {  
+        echo $i . '++' . $j . '++';// . $next[$i] . "++++<br />\n";
+        if ($j == -1 || $string{$i} == $string{$j}) {  
+            echo '--hh--' . $string{$i} . '##' . $string{$j} . '##';
+            $j++;
+            $i++;  
+            $next[$i] = $j;  
+        } else {
+            echo '--nn--' . $string{$i} . '##' . $string{$j} . '##';
+            $j = $next[$j];  
+        }
+        echo $i . '==' . $j . '==' . $next[$i] . "==<br />\n";
+    }  
+    print_r($next);  echo "<br />\n";
+    return $next;  
+}    
+
+error_reporting(0); 
+$strs = "abcabdcdbabcacdabcabcde";  
+$mystr = "abcabc";  
+//$next = getnext('aaabbbaaabbbxxxxxxxxxxxaaabbbb');//$mystr);
+//print_r($next);
+echo indexOf($strs,$mystr,0);  
+</pre>
+
+改进的KMP模式匹配算法
+<pre>
+// 通过计算返回子串T的next数组
+void get_nextval(String T, int *nextval)
+{
+  int i, j;
+  i = 1;
+  j = 0;
+  nxt[1] = 0;
+  while (i < T[0]) { // T[0]表示串T的长度
+    if (j == 0 || T[i] == T[j]) { // T[i]后缀的单个字符，T[j]前缀的单个字符
+      ++i;
+      ++j;
+      if (T[i] != T[j]) {
+        nextval[i] = j;
+      } else {
+        nextval[i] = nextval[j]; // 如果与前缀字符相同，则将前缀字符的nextval赋值到i位置
+      }
+    } else {
+      j = next[j]; // 若字符不相同，则j值回溯
+    }
+  }
+}
+</pre>
+
+KMP算法更详细的介绍可参考http://blog.csdn.net/joylnwang/article/details/6778316
 总结
 --------

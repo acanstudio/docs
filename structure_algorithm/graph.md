@@ -177,10 +177,146 @@ void CreateALGraph(GraphAdjList *G)
 // 针对n个结点e条边的图，时间复杂度O(n+e);
 </pre>
 
-
-
 图的遍历
 -----------
+
+从图的某一顶点出发访遍图中其余顶点，且使每个顶点仅被访问一次，这一过程叫做图的遍历(Traversing Graph)。为了配合图的遍历，通常生成一个顶点数组，用来标识顶点是否被访问过，称为访问数组Visited[n]。
+
+深度优先遍历(Depth_First_Search)，简称DFS；从图中某个顶点v出发，访问此结点，然后从v的未被访问的邻接点出发，深度优先便利图，直至图中所有和v有路径相通的顶点都被访问到。对于非连通图，只需要对它的连通分量分别进行深度优先遍历，若图中尚有顶点未被访问，则另选图中一个未被访问的顶点做起始点，重复深度优先遍历，直至图中所有顶点都被访问到。
+
+深度优先遍历算法
+<pre>
+typedef int Boolean; 
+Boolean Visited[MAX]; // 顶点访问标识数组
+
+// 邻接矩阵的深度优先递归算法
+void DFS(MGraph G, int i)
+{
+  int j;
+  visited[i] = true;
+  printf("%c ", G.vexs[i]); // 打印顶点
+  for (j = 0; j < G.numVertexes; j++) {
+    if (G.arc[i][j] == 1 && !visited[j]) {
+      DFS(G, j); // 对未访问的邻接顶点递归调用
+    }
+  }
+}
+
+// 邻接矩阵的深度遍历操作
+void BFSTraverse(MGraph G)
+{
+  int i;
+  for (i = 0; i < G.numVertexes; i++) {
+    visited[i] = false; // 初始化顶点访问数组
+  }
+
+  for (i = 0; i < G.numVertexes; i++) {
+    if (!visited[i]) { 
+      DFS(G, i); // 对未访问过的顶点调用DFS，若是连通图，只会执行一次
+    }
+  }
+}
+
+// 邻接表的深度优先递归算法
+void DFS(GraphAdjList GL, int i)
+{
+  EdgeNode *p;
+  Visited[i] = true;
+  printf("%c ", GL->adjList[i].data); // 打印结点
+  p = GL->adjList[i].firstedge;
+  while (p) {
+    if (!visited[p->adjvex]) {
+      DFS(GL, p->adjvex); // 对访问的邻接点递归调用
+    }
+    p = p->next;
+  }
+}
+
+// 邻接表的深度遍历操作
+void DFSTraverse(GraphAdjList GL)
+{
+  int i;
+  for (i = 0; i < GL->numVertexes; i++) {
+    visited[i] = false;
+  }
+
+  for (i = 0; i < GL->numVertexes; i++) {
+    if (!visited[i]) {
+      DFS(GL, i);
+    }
+  }
+}
+</pre>
+
+邻接矩阵遍历图的算法时间复杂度为O(n^2)，邻接表遍历图的时间复杂度为O(n + e)。
+
+广度优先遍历(Breadth_First_Search)，简称BFS。
+<pre>
+// 邻接矩阵的广度算法遍历
+void BFSTraverse(MGraph G)
+{
+  int i, j;
+  Queue Q;
+  for (i = 0; i < G.numVertexes; i++) {
+    visited[i] = false;
+  }
+
+  InitQueue(&Q); // 初始化一辅助用的队列
+  for (i = 0; i < G.numVertexes; i++) { // 对每一个顶点做循环
+    if (!visited[i]) {
+      {
+        visited[i] = true;
+        printf("%c ", G.vexs[i]); 
+        EnQueue(&Q, i); // 将顶点入队列
+        while (!QueueEmpty(Q)) {
+          DeQueue(&Q, &i); // 将队中元素出队列，赋值给i
+          for (j = 0; j < G.numVertexes; j++) {
+            // 判断其他未访问过的且与当前顶点有边
+            if (G.arc[i][j] == 1 && !visited[j]) {
+              visited[j] = true;
+              printf("%c ", G.vexs[j]);
+              EnQueue(&Q, j);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 邻接表的广度优先遍历算法
+void BFSTraverse(GraphAdjList GL)
+{
+  int i;
+  EdgeNode *p;
+  Queue Q;
+  for (i = 0; i < GL->numVertexes; i++) {
+    visited[i] = false;
+  }
+  InitQueue(&Q);
+  for (i = 0; i < GL->numVertexes; i++) {
+    if (!visited[i]) {
+      visited[i] = true;
+      printf("%c ", GL->adjList[i].data);
+      EnQueue(&Q, i);
+      whille (!QueueEmpty(Q)) {
+        DeQueue(&Q, &i);
+        p = GL->adjList[i].firstedge; 
+        while (p) {
+          if (!visited[p->adjvex]) {
+            visited[p->adjvex] = true;
+            printf("%c ", GL->adjList[p->adjvex].data);
+            EnQueue(&Q, p->adjvex);
+          }
+          p = p->next;
+        }
+      }
+    }
+  }
+}
+</pre>
+
+深度优先和广度优先在时间复杂度上是一样的，不同之处仅仅是对顶点的访问顺序不同。如果遍历的目的是寻找指定顶点，找到之后可以结束遍历，则深度优先时候目标比较明确，而广度优先适合在不断扩大遍历范围时找到相对最优解的情况。
 
 最小生成树
 -----------

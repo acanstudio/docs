@@ -451,10 +451,69 @@ Status ListInsert(StaticLinkList L, int i, ElemType e)
 }
 </pre>
 
+模拟存储空间的释放和和数据删除
+<pre>
+// 释放指定下标的结点，回收到备用链表
+void Free_SSL(StaticLinkList space, int k)
+{
+  space[k].cur = space[0].cur; // 把当前第一个备用链表结点赋值给要释放的结点
+  space[0].cur = k; // 释放指定结点，该结点称为备用链表的第一个结点
+}
+
+// 删除L中第i个元素e
+Status ListDelete(StaticLinkList L, int i)
+{
+  int j, k;
+  if (i < 1 || i > ListLength(L)) {
+    return false;
+  }
+  k = MAX_SIZE - 1;
+  for (j = 1; j <= i - 1; j++) {
+    k = L[k].cur;
+  }
+
+  j = L[k].cur;
+  L[k].cur = L[j].cur;
+  Free_SSL(L, j);
+
+  return true;
+}
+
+// 静态链表L存在，返回L中数据元素个数，即L的长度
+int ListLength(StaticLinkList L)
+{
+  int j = 0;
+  int i = L[MAXSIZE - 1].cur;
+
+  while (i) {
+    i = L[i].cur;
+    j++;
+  }
+  return j;
+}
+</pre>
+
+静态链表的优缺点
+* 插入和删除操作时，只需要修改下标不需要移动元素，优化了顺序存储结构的操作
+* 没有解决连续存储分配带来的表长难以确定的问题
+* 失去了顺序存储结构随机存取的特性
+
 循环链表
 ----------
 
 将单链表中终端结点的指针端有空指针改为指向头结点，就使整个单链表形成一个环，这种头尾相接的单链表成为单循环链表，简称循环链表（circular linked list），可以从当中一个结点出发，访问链表的全部结点。
+
+与普通链表主要差异在于循环的判断条件上，原来是判断p->next是否为空，现在则是判断p->next是否等于头结点。
+
+可以取消循环链表的头指针，采用尾指针的方式；这样第一个元素可以通过尾指针rear->next获取，同时也可以方便地获取最后一个元素；
+
+<pre>
+// 两个有尾指针的循环链表合并成一个循环链表的操作
+p = rearA->next; // 获取A表的头结点
+rearA->next = rearB->next->next; // A表的尾指针指向B表的第一个结点
+rearB->next = p; // B表的尾指针指向A表的头结点
+free(p);
+</pre>
 
 双向链表
 ----------
@@ -463,7 +522,7 @@ Status ListInsert(StaticLinkList L, int i, ElemType e)
 
 <pre>
 // 线性表的双向链表存储结构
-typedef structDolNode
+typedef struct DulNode
 {
   ElemType data;
   struct DoLNode *prior;

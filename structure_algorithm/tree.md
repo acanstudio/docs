@@ -168,8 +168,79 @@ typedef struct BiTNode
 遍历二叉树
 -------------
 
+二叉树的遍历(traversing binary tree)是指从根结点出发，按照某种次序依次访问二叉树中所有结点，使得每个结点被访问一次且仅被访问一次。
+
+* 前序遍历：若二叉树为空，则返回空，否则先访问根结点，然后前序遍历左子树，再前序遍历右子树；
+* 中序遍历：若树为空，返回空，否则从根结点开始(不是访问根结点)，中序遍历根结点的左子树，然后访问根结点，最后再中序遍历右子树；
+* 后序遍历：若树为空，返回空，否则从左到右先叶子后结点的方式遍历访问左右子树，最后访问根结点；
+* 层序遍历：若树为空，返回空，否则从树的第一层，也就是根结点开始访问，从上而下逐层遍历，在同一层中，按从左到右的顺序对结点逐个访问；
+
+前序遍历递归算法
+<pre>
+void PreOrderTraverse(BiTree T)
+{
+  if (T == null) {
+    return false;
+  }
+  printf("%c ", T->data);
+  PreOrderTravese(T->lchild); // 前序遍历左子树
+  PreOrderTravese(T->rchild); // 前序遍历右子树
+}
+</pre>
+
+中序遍历递归算法
+<pre>
+void InOrderTraverse(BiTree T)
+{
+  if (T == null) {
+    return false;
+  }
+  InOrderTravese(T->lchild); // 前序遍历左子树
+  printf("%c ", T->data);
+  InOrderTravese(T->rchild); // 前序遍历右子树
+}
+</pre>
+
+后序遍历递归算法
+<pre>
+void PostOrderTraverse(BiTree T)
+{
+  if (T == null) {
+    return false;
+  }
+  PostOrderTravese(T->lchild); // 前序遍历左子树
+  PostOrderTravese(T->rchild); // 前序遍历右子树
+  printf("%c ", T->data);
+}
+</pre>
+
+已知前序遍历序列和中序遍历序列，可以唯一确定一棵二叉树；已知后序遍历序列和中序遍历序列，可以唯一确定一棵二叉树；已知前序和后续序列，不能确定一棵二叉树。
+
 二叉树的建立
 --------------
+
+通过对普通二叉树进行扩展即将二叉树中每个结点的空指针引出一个虚节点。基于扩展后的二叉树可以方便地在内存中生成一棵二叉树。
+
+<pre>
+// 按前序输入二叉树中结点的值(一个字符)
+// #标识空树，构造二叉链表标识二叉树T
+void CreateBiTree(BiTree *T)
+{
+  TElemType ch;
+  scanf("%c", &ch);
+  if (ch == '#') {
+    *T = null;
+  } else {
+    *T = (BiTree) malloc(sizeof(BiTNode));
+    if (!*T) {
+      exit(OVERFLOW);
+    }
+    (*T)->data = ch; // 生成根结点
+    CreateBiTree(&(*T)->lchild);  // 构造左子树
+    CreateBiTree(&(*T)->rchild);  // 构造右子树
+  }
+}
+</pre>
 
 线索二叉树
 --------------

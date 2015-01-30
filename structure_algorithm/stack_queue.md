@@ -77,8 +77,105 @@ Status Pop(SqStack *S, SElemType *e)
 两栈共享空间
 ---------------
 
+共享栈的结构
+<pre>
+typedef struct
+{
+  SElemTpe data[MAXSIZE];
+  int top1; // 栈1的栈顶指针
+  int top2; // 栈2的栈顶指针
+} SqDoubleStack;
+</pre>
+
+共享栈的入栈操作
+<pre>
+// 插入元素额为新的栈顶元素
+Status Push(SqDoubleStack *S, SElemType e, int stackNumber)
+{
+  if (S->top1 + 1 == S->top2) { // 栈满
+    return false;
+  }
+  if (stackNumber == 1) {
+    S->data[++S->top] = e; // 栈1入栈
+  } elseif (stackNumber == 2) {
+    S->data[--S->top2] = e;
+  }
+
+  return true;
+}
+</pre>
+
+共享栈的出栈操作
+<pre>
+// 若栈不空，则删除S的栈顶元素，用e返回其值
+Status Pop(SqDoubleStack *S, SElemType *e, int stackNmeber)
+{
+  if (stackNumber == 1) {
+    if (S->top1 == -1) {
+      return false; // 栈1为空
+    }
+    *e = S->data[S->top--]; 
+  } elseif (stackNumber == 2) {
+    if (S->top2 == MAXSIZE) {
+      return false; // 栈2为空
+    }
+    *e = S->dataS->top2++];
+  }
+
+  return true;
+}
+</pre>
+
 栈的链式存储结构及实现
 --------------------------
+
+栈的链式存储结构是在普通链表的基础上，链表的头部作为栈顶(链栈通常不需要头结点)，增加一些栈操作，简称链栈。
+链栈的结构定义
+<pre>
+typedef struct StackNode
+{
+  SElemType data;
+  struct StackNode *next;
+} StackNode, *LinkStackPtr;
+
+typedef struct LinkStack
+{
+  LinkStackPtr top;
+  int count;
+} LinkStack;
+</pre>
+
+链栈的入栈操作
+<pre>
+// 插入元素e作为新的栈顶元素
+Status Push(LinkStack *S, SElemType e)
+{
+  LinkStackPtr s = (LinkStackPtr) malloc(sizeof(StackNode));
+  s->data = e;
+  s->next = S->top; // s的指针域指向当前栈顶元素
+  s->top = s; // 栈顶指针指向新元素
+  S->count++；
+  return true;
+}
+</pre>
+
+链栈的出栈操作
+<pre>
+// 若栈不空，则删除S的栈顶元素，用e返回其值
+Status Pop(LinkStack *S, SElemType *e)
+{
+  LinkStackPtr p;
+  if (StackEmpty(*S) {
+    return false;
+  }
+  p = S->top;
+  *e = p->data;
+  S->top = S->top->next;
+  free(p);
+  S->count--;
+  return true;
+}
+</pre>
 
 栈的作用
 --------------
@@ -88,8 +185,61 @@ Status Pop(SqStack *S, SElemType *e)
 栈的应用——递归
 ---------------
 
+斐波那契数列常规迭代实现
+<pre>
+int main()
+{
+  int i;
+  int a[40];
+  a[0] = 0; 
+  a[1] = 1;
+  printf("%d ", a[0]);
+  printf("$d ", a[1]);
+  for (i = 2; i < 40; i++) {
+    a[i] = a[i - 1] + a[i - 2];
+    printf("%d ", a[i]);
+  }
+
+  return ;
+}
+</pre>
+
+斐波那契数列的递归实现
+<pre>
+int Fbi(int i)
+{
+  if (i < 2) {
+    return i == 0 ? 0 : 1;
+  }
+  return Fbi(i - 1) + Fbi(i - 2); // 自己调用自己
+}
+
+int main()
+{
+  int i;
+  for (int i = 0; i < 40; i++) {
+    printf("%d ", Fbi(i));
+  }
+  return ;
+}
+</pre>
+
+把一个直接调用自己或通过一系列的调用语句间接地调用自己的函数称为递归函数。递归定义至少有一个条件，满足时不再进行递归。递归使用不当很容易造成时间和内存的损耗。
+
+递归执行的前行过程中，产生一系列的数据，回归过程则有不断消耗这些数据。这些数据通常都是在栈中进行管理和维护的。
+
 栈的应用——四则运算表达式求值
 -------------------------------
+
+后缀(逆波兰)表示法定义：四则运算表达式中，所有的符号都是在要运算数字的后面出现，并且没有了括号。
+
+后缀表达式计算规则：从左到右遍历表达式的每个数字和符号，遇到数字就进栈，遇到符号，就将栈顶两个数字出栈进行运算，然后将预算结果进栈，直至预算结束。
+
+中缀表达式(标准四则运算表达式)转换为后缀表达式的规则：从左到右遍历中缀表达式的每个数字和符号，若是数字就输出，成为后缀表达式的一部分，若是符号，则判断其与栈顶符号的优先级，是右括号或优先级低于栈顶符号(乘除优先加减)则栈顶元素依次出栈并输出，并将当前符号进栈，一直到最终输出后缀表达式。
+
+基于栈实现的四则运算表达式求值的步骤
+* 将中缀表达式转换为后缀表达式(栈用来进程运算的符号)；
+* 将后缀表达式进行运算得出结果(栈用来进出运算的数子)；
 
 队列的定义
 ------------
@@ -177,6 +327,65 @@ Status DeQueue(SqQueue *Q, QElemType *e)
 
 队列的链式存储结构及实现
 ---------------------------
+
+队列的链式存储结构，就是线性表的单链表，只是只能尾进头出，为了方便头结点或头指针指向对头，增加一个尾指针指向队尾。为了区别普通链表，称为链队列。
+
+链队列的结构
+<pre>
+typedef int QElemType; // 队列数据的类型
+
+typedef struct QNode // 结点结构
+{
+  QElemType data;
+  struct QNode *next;
+} QNode, *QueuePtr;
+
+typedef struct // 链队列结构
+{ 
+  QueuePtr front, rear; // 队头队尾指针
+} LinkQueue;
+</pre>
+
+入队操作
+<pre>
+// 插入元素e作为Q的新的队尾元素
+Status EnQueue(LinkQueue *Q, QElemType e)
+{
+  QueuePtr s = (QueuePtr)malloc(sizeof(QNode));
+  if (!s) { // 存储分配失败
+    return false;
+  }
+
+  s->data = e;
+  s->next = null;
+  Q->rear->next = s; // 之前的队尾元素的指针域指向s
+  Q->rear = s; // 队尾指针指向s
+  return true;
+}
+</pre>
+
+出队操作
+<pre>
+// 若队列不空，删除Q的队头元素，用e返回其值
+Status DeQueue(LinkQueue *Q, QElemType *e)
+{
+  QueuePtr p;
+  if (Q->front == Q->rear) {
+    return false;
+  }
+  p = Q->front->next; // 获取队头元素
+  *e = p->data;
+  Q->front->next = p->next; // 队头指针指向队头的下一个元素
+
+  if (Q->rear == p) { // 若删除的元素同时是最后一个元素，将rear指向头结点
+    Q->rear = Q->front;
+  }
+  free(p);
+  return true;
+}
+</pre>
+
+队列长度可以基本确定的环境下，考虑使用循环队列，否则使用链队列。
 
 总结
 -----

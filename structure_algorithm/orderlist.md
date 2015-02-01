@@ -41,6 +41,54 @@ void swap(SqList *L, int i, int j)
 冒泡排序
 ----------
 
+冒泡排序(Bullle Sort)，是一种交换排序，基本思想是：两两比较相邻记录的关键字，如果反序则交换，直到没有反序的记录为止。
+
+<pre>
+// 原始的比较排序实现
+void BubbleSort0(SqList *L)
+{
+  int i, j;
+  for (i = 0; i < L->length; i++) {
+    for (j = i + 1; j <= L->length; j++) {
+      if (L->r[i] > L->r[j]) {
+        swap(L, i, j); // 交换L->r[i]和L->r[j]的值
+      }
+    }
+  }
+}
+
+// 冒泡排序实现
+void BubbleSort(SqList *L)
+{
+  int i, j;
+  for (i = 1; i < L->length; i++) {
+    for (j = L->length - 1; j >= i; j--) { // j从后向前循环
+      if (L->r[j] > L->r[j+1]) { // 若前者大于后者
+        swap(L, j, j+1); 
+      }
+    }
+  }
+}
+
+// 改进的冒泡排序
+void BubbleSortFlag(SqList *L)
+{
+  int i, j;
+  Status flag = true; 
+  for (i = 1; i < L->length && flag; i++) { // flag为true时退出循环
+    flag = false;
+    for (j = L->length - 1; j >= i; j--) {
+      if (L->r[j] > L->r[j+1]) {
+        swap(L, j, j+1);
+        flag = true;
+      }
+    }
+  }
+}
+</pre>
+
+冒泡排序的复杂度分析，最好的情况，只做n-1次比较操作，没有交换，时间复杂度为O(n)，最坏的情况，需要比较n(n-1)/2次，并做等数量级的记录移动，因此时间复杂度为O(n^2)。
+
 简单选择排序
 -------------
 

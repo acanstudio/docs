@@ -245,6 +245,69 @@ void CreateBiTree(BiTree *T)
 线索二叉树
 --------------
 
+树结点中，指向前驱和后继的指针成为线索，加上线索的二叉链表成为线索链表，相应的二叉树称为线索二叉树(Threaded Binary Tree)。对二叉树以某种次序遍历使其变成线索二叉树的过程称为线索化。
+
+为了标识lchild或rchild中存放的是前驱指针还是左子树指针，需要额外增加标记，结构定义为：
+<pre>
+// 二叉树的二叉线索存储结构定义
+typedef enum {Link, Thread} PointerTag; // Link = 0, 表示指向左右孩子指针，Thread = 1，表示指向前驱或后继的线索
+
+typedef struct BiThrNode 
+{
+  TElemType data; // 结点数据
+  struct BiThrNode *lchild, *rchild; // 左右孩子指针
+  PointerTag LTag;
+  PointerTag RTag; // 左右标识
+} BiThrNode, *BiThrTree;
+</pre>
+
+中序遍历过程同时进行线索化
+<pre>
+BiThrTree pre; // 全局变量，始终指向刚刚访问过得结点
+
+void InThreading(BiThrTree p)
+{
+  if (!p) {
+    return false;
+  }
+
+  InThreading(p->lchild); // 递归左子树线索化
+  if (!p->lchild) { // 没有左孩子
+    p->LTag = Thread;
+    p->lchild = pre;
+  }
+  if (!pre->rchild) { // 前驱没有右孩子
+    pre->RTag = Thread;
+    pre->rchild = p;
+  }
+  pre = p;
+  InThreading(p->rchild);
+}
+</pre>
+
+针对线索二叉树，增加一个头结点，头结点的lchild指向根结点，rchild指向最后一个结点；线索二叉树的第一个结点的lchild指向头结点，最后一个结点的rchild指向头结点。这样处理后的线索二叉树遍历起来更加方便
+<pre>
+Status InOrderTravers_Thr(BiThrTree T)
+{
+  BiThrTree p;
+  p = T->lchild; // 根结点
+  while (p != T) { // 空树或遍历结束时，p==T
+    while (p->LTag == link) { // 循环到左子树
+      p = p->lchild;
+    }
+    printf("%c", p->data);
+    while (p->RTag == Thread && p->rchild != T) { 
+      p = p->rchild;
+      printf("%c", p->data);
+    }
+    p = p->rchild; // p进入其右子树
+  }
+
+  return true;
+}
+// 该算法的时间复杂度为O(n)
+</pre>
+
 树、森林与二叉树的转换
 -----------------------
 
@@ -279,6 +342,19 @@ void CreateBiTree(BiTree *T)
 
 赫夫曼树及其应用
 -------------------
+
+* 路径，从树中一个结点到另一个结点之间的分支构成两个结点之间的路径；路径上的分支数目称为路径长度；
+* 树的路径长度就是从树根到每一个结点的路径长度之和；
+* 如果结点带权的话，结点的路径长度是该结点到树根之间的路径长度和权的乘积；
+* 带权路径长度最小的二叉树称为赫夫曼二叉树，又称最优二叉树；
+
+构造赫夫曼树的赫夫曼算法
+* 根据给定的n个权值{w1,...,wn}构成n棵二叉树集合F={T1,...,Tn}；初始的每棵二叉树只有一个根结点；
+* 在F中选取两棵根结点的权值最小的树作为左右子树构造一棵新的二叉树，且置新的二叉树的根结点的权值为其左右子树根结点的权值之和；
+* 在F中删除选定的两棵树，同时将新的二叉树放进去；
+* 重复上面两步，直到F只包含一棵树为止，得到的树便是赫夫曼树；
+
+赫夫曼编码：设需要编码的字符集为{d1,...,dn}，各个字符出现的频率分别为{w1,...,wn}，以字符集作为叶子结点，各个字符的频率作为对应叶子的权值，构造出一棵赫夫曼树，规定左分支代表0，右分支代表1，则从根结点到叶子结点所经过的路径分支组成的0、1序列便为该结点对应字符的编码，称为赫夫曼编码。
 
 总结
 ---------

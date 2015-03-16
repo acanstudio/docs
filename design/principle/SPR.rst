@@ -15,117 +15,114 @@
 
 用一个类描述动物呼吸这个场景
 
-::
-
-    class Terrestrial
+<pre>
+class Terrestrial
+{
+    public function breathe($animal)
     {
-        public function breathe($animal)
-	{
-	    echo $animal . "呼吸空气;\n";
-	}
+       echo $animal . "呼吸空气;\n";
     }
+}
 
-    $terrestrialObject = new Terrestrial();
-    $terrestrialObject->breathe('牛');
-    $terrestrialObject->breathe('羊');
-    $terrestrialObject->breathe('猪');
-    
-运行结果：
+$terrestrialObject = new Terrestrial();
+$terrestrialObject->breathe('牛');
+$terrestrialObject->breathe('羊');
+$terrestrialObject->breathe('猪');
+   
+//运行结果：
 牛呼吸空气
 羊呼吸空气
 猪呼吸空气
+</pre>
 
 动物除了呼吸空气外，还有鱼呼吸水的情况
 
-::
-
-    class Terrestrial
-    {
-        public function breathe($animal)
-	{
-	    echo $animal . "呼吸空气;\n";
-	}
+<pre>
+class Terrestrial
+{
+    public function breathe($animal)
+    { 
+        echo $animal . "呼吸空气;\n";
     }
+}
 
-    class Aquatic
+class Aquatic
+{
+    public function breathe($animal)
     {
-        public function breathe($animal)
-	{
-	    echo $animal . "呼吸水\n";
-	}
+        echo $animal . "呼吸水\n";
     }
+}
 
-    $terrestrialObject = new Terrestrial();
-    $terrestrialObject->breathe('牛');
-    $terrestrialObject->breathe('羊');
-    $terrestrialObject->breathe('猪');
-    $aquaticObject = new Aquatic();
-    $aquaticObject->breathe('鱼');
-    
-运行结果：
+$terrestrialObject = new Terrestrial();
+$terrestrialObject->breathe('牛');
+$terrestrialObject->breathe('羊');
+$terrestrialObject->breathe('猪');
+$aquaticObject = new Aquatic();
+$aquaticObject->breathe('鱼');
+
+// 运行结果：
 牛呼吸空气
 羊呼吸空气
 猪呼吸空气
 鱼呼吸水
+</pre>
 
 违背单一职责原则的处理方式
 
 在现有基础上分解类的修改花销较大，甚至还需要修改客户端代码，稍微违背单一职责原则，可以是修改花销降低
 
-::
-
-    class Terrestrial
+<pre>
+class Terrestrial
+{
+    public function breathe($animal)
     {
-        public function breathe($animal)
-	{
-	    if ('鱼' == $animal)) {
-	        echo $animal . "呼吸水;\n";
-	    } else {
-	        echo $animal . "呼吸空气;\n";
-	    }
-	}
+        if ('鱼' == $animal)) {
+            echo $animal . "呼吸水;\n";
+        } else {
+            echo $animal . "呼吸空气;\n";
+        }
     }
+}
 
-
-    $terrestrialObject = new Terrestrial();
-    $terrestrialObject->breathe('牛');
-    $terrestrialObject->breathe('羊');
-    $terrestrialObject->breathe('猪');
-    $terrestrialObject->breathe('鱼');
-    
+$terrestrialObject = new Terrestrial();
+$terrestrialObject->breathe('牛');
+$terrestrialObject->breathe('羊');
+$terrestrialObject->breathe('猪');
+$terrestrialObject->breathe('鱼');
+</pre>
 
 违背单一职责原则的另一种处理方式
 
 上面的处理方式，对breathe方法的修改是有风险的，可以考虑增加一个方法来避免这样带来的风险
 
-::
-
-    class Terrestrial
+<pre>
+class Terrestrial
+{
+    public function breathe($animal)
     {
-        public function breathe($animal)
-	{
-	    echo $animal . "呼吸空气;\n";
-	}
-
-        public function breathe2($animal)
-	{
-	    echo $animal . "呼吸水\n";
-	}
+        echo $animal . "呼吸空气;\n";
     }
 
+    public function breathe2($animal)
+    {
+        echo $animal . "呼吸水\n";
+    }
+}
 
-    $terrestrialObject = new Terrestrial();
-    $terrestrialObject->breathe('牛');
-    $terrestrialObject->breathe('羊');
-    $terrestrialObject->breathe('猪');
-    $terrestrialObject->breathe2('鱼');
+
+$terrestrialObject = new Terrestrial();
+$terrestrialObject->breathe('牛');
+$terrestrialObject->breathe('羊');
+$terrestrialObject->breathe('猪');
+$terrestrialObject->breathe2('鱼');
+</pre>
     
 例如本文所举的这个例子，它太简单了，它只有一个方法，所以，无论是在代码级别上违反单一职责原则，还是在方法级别上违反，都不会造成太大的影响。实际应用中的类都要复杂的多，一旦发生职责扩散而需要修改类时，除非这个类本身非常简单，否则还是遵循单一职责原则的好。
 
 遵循单一职责原的优点有：
-
-可以降低类的复杂度，一个类只负责一项职责，其逻辑肯定要比负责多项职责简单的多；
-提高类的可读性，提高系统的可维护性；
-变更引起的风险降低，变更是必然的，如果单一职责原则遵守的好，当修改一个功能时，可以显著降低对其他功能的影响。
+    * 可以降低类的复杂度，一个类只负责一项职责，其逻辑肯定要比负责多项职责简单的多；
+    * 提高类的可读性，提高系统的可维护性；
+    * 变更引起的风险降低，变更是必然的，如果单一职责原则遵守的好，当修改一个功能时，可以显著降低对其他功能的影响。
 
 需要说明的一点是单一职责原则不只是面向对象编程思想所特有的，只要是模块化的程序设计，都适用单一职责原则。

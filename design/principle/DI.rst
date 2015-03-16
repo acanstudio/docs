@@ -13,96 +13,91 @@
 
 母亲讲故事的小例子，场景是这样的，母亲给孩子讲故事，只要给她一本书，她就可以照着书给孩子讲故事了。代码如下：
 
-::
-
-    class Book
+<pre>
+class Book
+{  
+    public function getContent()
     {  
-        public function getContent()
-	{  
-            return "很久很久以前有一个阿拉伯的故事……";  
-        }  
+        return "很久很久以前有一个阿拉伯的故事……";  
     }  
+}  
       
-    class Mother
+class Mother
+{  
+    public function narrate(Book $book)
     {  
-        public function narrate(Book $book)
-	{  
-            echo '妈妈开始讲故事';
-            echo $book->getContent();  
-        }  
+        echo '妈妈开始讲故事';
+        echo $book->getContent();  
     }  
+}  
      
-    $mother = new Mother();
-    $mother->narrate(new Book());
+$mother = new Mother();
+$mother->narrate(new Book());
 
-运行结果：
+// 运行结果：
 
 妈妈开始讲故事
 很久很久以前有一个阿拉伯的故事……
 
-妈妈读报纸，妈妈发现除了给孩子讲故事外，给孩子读报纸也很有意义。 ::
-
-    class Newspaper{  
-        public function getContent()
-	{  
-            return "党和国家领导人……";  
-        }  
+// 妈妈读报纸，妈妈发现除了给孩子讲故事外，给孩子读报纸也很有意义。
+class Newspaper{  
+    public function getContent()
+    {  
+        return "党和国家领导人……";  
     }  
+}  
+</pre>
 
 此时最不合理的是，如果妈妈要实现读报纸，需要修改Mother这个类，而且以后如果妈妈还要读杂志，读诗歌...这些都要去修改Mother类，这显然不是好的设计。原因就是Mother与Book之间的耦合性太高了，
-必须降低他们之间的耦合度才行。我们引入一个抽象的接口IReader。读物，只要是带字的都属于读物。 ::
+必须降低他们之间的耦合度才行。我们引入一个抽象的接口IReader。读物，只要是带字的都属于读物。
 
-    interface IReader
-    {  
-        public function getContent();  
-    }  
+<pre>
+interface IReader
+{  
+    public function getContent();  
+}  
 
 Mother类与接口IReader发生依赖关系，而Book和Newspaper都属于读物的范畴，他们各自都去实现IReader接口，这样就符合依赖倒置原则了，代码修改为： 
 
-::
-
-    class Newspaper implements IReader 
+<pre>
+class Newspaper implements IReader 
+{  
+    public function getContent()
     {  
-        public function getContent()
-	{  
-            return "当和国家领导人……";  
-        }  
-    }
-    class Book implements IReader
-    {  
-        public function getContent()
-	{  
-            return "很久很久以前有一个阿拉伯的故事……";  
-        }  
+        return "当和国家领导人……";  
     }  
+}
+class Book implements IReader
+{  
+    public function getContent()
+    {  
+        return "很久很久以前有一个阿拉伯的故事……";  
+    }  
+}  
       
-    class Mother
-    { 
-        public function narrate(IReader $reader)
-	{  
-            echo "妈妈开始给孩子读书了\n";  
-            echo $reader->getContent();  
-        }  
+class Mother
+{ 
+    public function narrate(IReader $reader)
+    {  
+        echo "妈妈开始给孩子读书了\n";  
+        echo $reader->getContent();  
     }  
+}  
      
-    Mother $mother = new Mother();  
-    $mother->narrate(new Book());  
-    $mother->narrate(new Newspaper());   
+Mother $mother = new Mother();  
+$mother->narrate(new Book());  
+$mother->narrate(new Newspaper());   
 
-运行结果：
+// 运行结果：
 
 妈妈开始给孩子读书了
 很久很久以前有一个阿拉伯的故事……
 妈妈开始给孩子读书了
 党和国家领导人……
 
-这样修改后，无论以后怎样扩展应用代码，都不需要再修改Mother类了。这只是一个简单的例子，实际情况中，代表高层模块的Mother类将负责完成主要的业务逻辑，一旦需要对它进行修改，引入错误的风险
-极大。所以遵循依赖倒置原则可以降低类之间的耦合性，提高系统的稳定性，降低修改程序造成的风险。采用依赖倒置原则给多人并行开发带来了极大的便利，比如上例中，原本Mother类与Book类直接耦合时，
-Mother类必须等Book类编码完成后才可以进行编码，因为Mother类依赖于Book类。修改后的程序则可以同时开工，互不影响，因为Mother与Book类一点关系也没有。参与协作开发的人越多、项目越庞大，采用
-依赖导致原则的意义就越重大。现在很流行的TDD开发模式就是依赖倒置原则最成功的应用。
+这样修改后，无论以后怎样扩展应用代码，都不需要再修改Mother类了。这只是一个简单的例子，实际情况中，代表高层模块的Mother类将负责完成主要的业务逻辑，一旦需要对它进行修改，引入错误的风险极大。所以遵循依赖倒置原则可以降低类之间的耦合性，提高系统的稳定性，降低修改程序造成的风险。采用依赖倒置原则给多人并行开发带来了极大的便利，比如上例中，原本Mother类与Book类直接耦合时，Mother类必须等Book类编码完成后才可以进行编码，因为Mother类依赖于Book类。修改后的程序则可以同时开工，互不影响，因为Mother与Book类一点关系也没有。参与协作开发的人越多、项目越庞大，采用依赖导致原则的意义就越重大。现在很流行的TDD开发模式就是依赖倒置原则最成功的应用。
 
-传递依赖关系有三种方式，以上的例子中使用的方法是接口传递，另外还有两种传递方式：构造方法传递和setter方法传递，相信用过Spring框架的，对依赖的传递方式一定不会陌生。在实际编程中，我们一般
-需要做到如下3点：
+传递依赖关系有三种方式，以上的例子中使用的方法是接口传递，另外还有两种传递方式：构造方法传递和setter方法传递，相信用过Spring框架的，对依赖的传递方式一定不会陌生。在实际编程中，我们一般需要做到如下3点：
 
     * 低层模块尽量都要有抽象类或接口，或者两者都有。
     * 变量的声明类型尽量是抽象类或接口。

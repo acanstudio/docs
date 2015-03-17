@@ -2,7 +2,7 @@
 ===
 
 串的相关概念
-----------
+-------------
 
 * 串（string）是由零个或多个字符组成的有限序列，又叫字符串；
 * 串中字符数目n称为串的长度；
@@ -27,20 +27,21 @@ Operation
     ClearString(S): 串S存在，清空串S
     StringEmpty(S): 若串S为空，返回true，否则返回false
     StrLength(S): 返回串的元素个数，即串的长度
-    StrCompare(S, T): 若S>T，返回值大于0，若相等返回0，若S<T，返回值小于0
+    StrCompare(S, T): 若S>T，返回值大于0，若相等返回0，若S < T，返回值小于0
     Concat(T, S1, S2): 用T返回由S1和S2连接而成的新串
     SubString(Sub, S, pos, len): 串S存在， 1<=pos<=StrLength(S), 0<=len<=StrLength(S) - pos + 1，用Sub返回串S的第pos个字符起长度为len的子串
     Index(S, T, pos): 串S和T存在，T是非空串，1<=pos<=StrLength(S)，若主串S中存在和串T值相同的子串，则返回他在主串S中的第pos个字符之后第一次出现的位置，否则返回false
     Replace(S, T, V): 串S、T、V存在，T非空，用V串替换S中出现的所有与T串相等的不重叠的子串
     StrInsert(S, pos, T): 串S和T存在，1<=pos<=StrLength(S) + 1，在串S的第pos个字符之前插入串T
     StrDelete(S, pos, len): 串S存在，1<=pos<=StrLength(S) - len + 1， 从串S中删除第pos个字符起长度为len的子串
+endADT;
 
-endADT
 </pre>
 
 检索主串中指定子串的位置的算法
 
 <pre>
+
 // T为非空串，若主串S中第pos个字符之后存在与T串相等的子串
 // 则返回pos，否则返回false
 int Index(String S, String T, int pos)
@@ -103,7 +104,6 @@ int Index(String S, String T, int pos)
 模式匹配算法PHP版
 
 <pre>
-<?php
 $string = '00000000000000000000001';
 $find = '0002';
 $result = search($string, $find);
@@ -113,24 +113,24 @@ function search($string, $find, $position = 0)
 {
     $len = strlen($string);
     $len1 = strlen($find);
-    echo $len . '--' . $len1 . '<br />';
+    echo $len . '--' . $len1 . "\n";
     $i = $position;
     $j = 0;
     while ($i <= $len - 1 && $j <= $len1 - 1 && $len - $i >= $len1) { // 若i小于S长度且j小于T的长度是开始循环
         echo $i . '===' . $j;
 
         if ($string{$i} == $find{$j}) {
-            echo '--yes<br />';
+            echo "--yes\n";
             ++$i;
             ++$j;
         } else {
-            echo '--no<br />';
+            echo "--no\n";
             $i = $i - $j + 1; // i 退回到上次匹配首位的下一位
             $j = 0; // j退回到字串的首位
         }
     }
-    echo $i . 'i<br />';
-    echo $j . 'j<br />';
+    echo $i . "i\n";
+    echo $j . "j\n";
     if ($j >= $len1) {
         return $i - $len1;
     } else {
@@ -189,7 +189,6 @@ int Index_KMP(String S, String T, int pos)
 
 KMP模式匹配PHP版
 <pre>
-<?php
 function indexOf($target, $pattern, $start)
 {  
     $result = false;
@@ -199,7 +198,7 @@ function indexOf($target, $pattern, $start)
         return $result;
     }
 
-    echo "t-:$target<br/>\np-:$pattern<br/>\n";  
+    echo "t-:$target\np-:$pattern\n";  
     $i = $start;  
     $j = 0;  
     $next = getNext($pattern);  
@@ -208,7 +207,7 @@ function indexOf($target, $pattern, $start)
         for ($k = 0; $k < $targetLen; $k++) {
             echo $target{$k} . '|';
         }
-        echo "<br />\n";
+        echo "\n";
 
         if ($jrollback) {
             for ($k = 0; $k < $i - $j; $k++) {
@@ -226,7 +225,7 @@ function indexOf($target, $pattern, $start)
             $jrollback = true;
             $j = $next[$j];  
         }
-        echo "-------------------------------------------------i:$i,j:$j<br/>\n";  
+        echo "-------------------------------------------------i:$i,j:$j\n";  
         if ($j==strlen($pattern)) {
             $result = $i - $j;
             break;
@@ -244,7 +243,7 @@ function getNext($string)
     $next[0] = -1;  
   
     while ($i < strlen($string) - 1) {  
-        echo $i . '++' . $j . '++';// . $next[$i] . "++++<br />\n";
+        echo $i . '++' . $j . '++';// . $next[$i] . "++++\n";
         if ($j == -1 || $string{$i} == $string{$j}) {  
             echo '--hh--' . $string{$i} . '##' . $string{$j} . '##';
             $j++;
@@ -254,9 +253,9 @@ function getNext($string)
             echo '--nn--' . $string{$i} . '##' . $string{$j} . '##';
             $j = $next[$j];  
         }
-        echo $i . '==' . $j . '==' . $next[$i] . "==<br />\n";
+        echo $i . '==' . $j . '==' . $next[$i] . "==\n";
     }  
-    print_r($next);  echo "<br />\n";
+    print_r($next);  echo "\n";
     return $next;  
 }    
 

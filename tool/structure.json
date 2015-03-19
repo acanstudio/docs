@@ -2,13 +2,21 @@
   "vim": {
     "title": "Vim使用心得",
     "subElems": {
-      "vim-base": {"title": "vim基本操作"}
+      "base": {"title": "vim基本操作"},
+      "filetype": {"title": "文件类型"},
+      "manual": {
+        "title": "Vim手册",
+        "subElems": {
+          "base": {"title": "Vim基础"},
+          "user_01": {"title": "操作"}
+        }
+      }
     }
   },
   "markdown": {
     "title": "markdown规则"
   },
   "index": {
-    "title": "设计原则和模式概述"
+    "title": "常用工具手册"
   }
 }

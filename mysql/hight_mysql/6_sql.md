@@ -122,81 +122,181 @@ SHOW FULL PROCESSLIST
 
 
 
+MySQL查询优化器的局限性
+------------------------
 
-    结合书中关于多表关联的案例，参考一个实际例子 《MySQL SQL优化之 STRAIGHT_JOIN》 全面介绍优化过程。
+### 关联子查询
 
-    排序优化，不管怎么样，从性能角度，应该尽可能避免排序，或者尽可能避免对大量数据进行排序。第三章讲了索引排序，快速，当不能直接使用索引时，MySQL就会自己进行排序，数据量小时在内存中排序，数据量大时使用到磁盘。量小于“排序缓冲区”时，MySQL使用内存进行“快速排序”。如果内存不够，MySQL先将数据分块，每块使用快速排序，然后将各块结果放在硬盘上，然后合并（merge），最后返回排序结果。
+MySQL的子查询实现得非常糟糕，尤其是WHERE中包含IN()的子查询，如
+<pre>
+mysql> SELECT * FROM `sakila`.`film`
+  WHERE `film_id` IN (
+    SELECT `film_id` FROM `sakila`.`film_actor` WHERE `actor_id` = 1
+  );
+</pre>
+针对上面的查询，如果先执行子查询，获取子查询结果后，再执行整个语句，查询的效率倒还不错，但是MySQL的处理方式是吧外层表压到子查询中，即：
+<pre>
+// 可以使用EXPLAIN EXTENDED查看查询被改写成什么样子
+SELECT * FROM `sakila`.`film`
+WHERE EXISTS (
+  SELECT * FROM `sakila`.`film_actor` WHERE `actor_id` = 1
+  AND `film_actor`.`film_id` = `film`.`film_id`);
+</pre>
 
-    注意：MySQL排序过程统称为文件排序（filesort），概念上的，即使排序发生在内存，而不是磁盘文件中。
+### 索引合并优化
 
-    MySQL有两种排序算法，两次传输排序（旧版）、单次传输排序（新版）。两种各有各的最好和最差的应用场景，注意 max_length_for_sort_data 是临界值，不超过时使用单次传输，超过使用两次传输。MySQL自动判断，具体参考第八章中“文件排序优化”。
+当WHERE子句中包含多个复杂条件的时候，MySQL能够访问单个表的多个索引以合并和交叉过滤的方式来定位需要查找的行。
 
-    两次传输排序（旧版），读取行指针和需要排序的字段，对其进行排序，然后再根据排序结果读取所需要的数据行。显然是两次传输，特别是读取排序后的数据时（第二次）大量随机I/O，所以两次传输成本高。
+### 松散索引扫描
 
-    单次传输排序（新版），一次读取出所有需要的或SQL查询指定的列，然后根据排序列，排序，直接返回排序后的结果。顺序I/O，缺点：如果列多，额外占用空间。
+MySQL不支持松散索引扫描，无法按照不连续的方式扫描一个索引，通常，MySQL的索引扫描需要先定义一个起点和终点，然后扫描这段索引的每一个条目；
 
-    注意：MySQL排序时使用的空间比想象大很多，为什么？因为MySQL要为每一个排序记录分配足够长的空间存放，VARCHAR满长度（声明的完整长度），使用UTF8字符集时，为每个字符预留3个字节。所以会很大！
+### 最大值和最小值优化
 
-    结合关联查询，排序会更复杂。如果ORDER BY排序列都在第一个表（驱动表），那么在关联处理时，先对驱动表排序，Explain结果中Extra会有Using filesort；除此之外所有情况，都会在关联结束后，将结果放在临时表中进行最终排序，Extra中会有Using temporary;Using filesort。如果还有LIMIT，也会在排序后应用。可以，排序需要的空间大！
+MIN()和MAX()查询会扫描全表，可以通过变通的方式优化MIN()操作。
 
-    注意：MySQL5.6以后，有所优化，如果有LIMIT会只排序需要的，而不是所有，抛弃不满足条件的结果。
+### 在同一个表上查询和更新
 
-   查询执行引擎，相对于查询优化，查询执行简单些了，MySQL只根据执行计划输出的指令逐步执行。指令都是调用存储引擎的API来完成，一般称为 handler API，实际上，MySQL优化阶段为每个表都创建了一个 handler 实例，（类似于VC++编程中的句柄？），用 handler 实例获取表的信息（列名、索引统计信息等）。
+MySQL不允许对同一张表同时进行查询和更新，如下面的SQL是无法执行的
+<pre>
+mysql> UPDATE `tb1` AS `outer_tb1`
+  SET `cnt` = (
+    SELECT COUNT(*) FROM `tb1` AS `inner_tb1`
+    WHERE `inner_tb1`.`type` = `outer_tb1`.`type`
+  );
+</pre>
+可以通过使用生成表的形式绕过上面的限制，
+<pre>
+mysql> UPDATE `tb1`
+  INNER JOIN (
+    SELECT `type`, COUNT(*) AS `cnt` FROM `tb1` GROUP BY `type`
+  ) AS `der` USING(`type`)
+SET `tb1`.`cnt` = `der`.`cnt`;
+</pre>
 
-    注意：存储引擎接口不丰富，底层仅几十个，但功能丰富！如某接口实现了查询第一行，又有一个接口实现了查询下一行，有了这两个就可以全表扫描了！
+查询优化器的提示（hint）
+------------------------
 
-    返回结果给客户端，有结果集返回结果集，没结果，返回影响的行数。一般MySQL也会将这个结果缓存下来，存放到查询缓存中。
+可以使用优化器提供的几个提示（hint）来控制最终的执行计划。常用的提示有
 
-    注意：MySQL返回结果是一个增量、逐步返回的过程，例如，关联操作中，当一个嵌套循环处理到最后一个关联表，并开始生成第一条结果时，MySQL就可以开始向客户端逐步返回结果集了。好处：服务器端无须存储太多结果，也不会因为返回的结果太多而消耗太多内存，也使客户端第一时间获得返回结果。结果是以TCP协议封包发送的，TCP的传输过程，可能会对封包进行缓存然后批量发送。
+HIGH_PRIORITY和LOW_PRIORITY，指定语句的优先级；
+DELAYED：对INSERT和REPLACE有效，即可返回，将数据缓存，然后在表空闲时写入；
+STRAIGHT_JOIN：
+SQL_SMALL_RESULT和SQL_BIG_RESULT：对SELECT有效，建议结果集放在内存或磁盘；
+SQL_BUFFER_RESULT：将查询结果放到一个临时表，然后尽可能快递释放表锁；
+SQL_CACHE和SQL_NO_CACHE：结果是否缓存在查询缓存；
+SQL_CALC_FOUND_ROWS：
+FOR UPDATE和LOCK IN SHARE MODE：
+USE INDEX、IGNORE INDEX和FORCE INDEX：
 
-======================================================
+optimizer_search_depth：
+optimizer_prune_level：
+optimizer_switch：
 
-    6.5 MySQL查询优化器的局限性
+不建议使用优化器的提示来优化查询，在版本升级和代码维护上增加了隐患。
 
-    不熟悉 JOIN USING 和 JOIN ON 的请看 红薯作品 MySQL 三种关联查询的方式: ON vs USING vs 传统风格
+优化特定类型的查询
+--------------------
 
-    一个是关联子查询，没看明白，回来再读。
+### 优化 COUNT()查询
 
-    一个UNION限制，无法将限制条件从外层下推到内层，改造例子如下
+COUNT()有两个作用
+    * 统计非NULL列的列值的数量;
+    * 统计返回数据集的行数；
+    
+常用的是COUNT(*)，*常被误解为所有列，实际上在操作时是忽略所有列，而直接统计所有行数。COUNT(*)中的*与SELECT *中的*是不同的。如果你真想统计结果集的行数，就用 COUNT(*)而不要使用 COUNT(`colume`)。
 
+通常以为 MyISAM执行COUNT(*)最快，实际上是有条件的，只有不用WHERE时，因为MySQL根本不用扫描数据行，也无须去计算，会直接利用存储引擎的特性去获得这个值。当带上WHERE或者要统计指定列的的数量，就需要去扫描去计算了。
 
-    等值传递：讲的IN列表，MySQL会将IN列表的值传到各个过滤子句，如果IN列表太大，会造成额外消耗，优化和执行都很慢。
+简单优化
+<pre>
+mysql> SELECT COUNT(*) FROM `world`.`city` WHERE `id` > 5; # 假定符合条件的有10000条数据
 
-    并行执行，MySQL无法执行并行查询，不用白费力气了。
+// 优化
+mysql> SELECT (SELECT COUNT(*) FROM `world`.`city`) - COUNT(*) FROM `world`.`city` WHERE `id` <= 5;
+</pre>
 
-    哈希关联，MySQL不支持哈希关联，所有关联都是嵌套循环关联。
+使用近似值
+业务场景不要求完全精确的COUNT值得时候，可以考虑使用近似值来代替，EXPLAIN出来的优化器估算的行数是一个不错的近似值，执行EXPLAIN并不需要去执行查询，所以成本很低。
 
-    松散索引扫描，MySQL不支持松散（跳跃），仍需要扫描每一个条目。
+COUNT()需要扫描大量的行才能获得精确的结果，所以比较难以优化。可以考虑在MySQL层面做索引覆盖扫描，或者考虑修改应用的架构，增加汇总表，或者增加类似Memcached这样的缓存系统。优化的过程就是“快速、精确和实现简单”三者的一个博弈。
 
-    最大值和最小值，MySQL对 MIN()和MAX()做得不好。看一个例子，强制使用索引来优化（use index(xx))。
+### 优化关联查询
 
-    在同一个表上查询和更新，MySQL不允许这样。
+    * 确保ON或USING子句中的列上有索引，在创建索引时就要考虑到关联的顺序，在创建索引的时候就要考虑到关联的顺序，当表A和表B用列c关联时，如果优化器的关联顺序是B、A，那么就不需要在B表的对应列上建索引；没有用到的索引只会带来额外的负担，一般只需要在关联顺序中的第二个表的相应列上创建索引；
+    * 确保任何的GROUP BY和ORDER BY中的表达式只涉及到一个表中的列，这样MySQL才有可能使用索引来优化这个过程；
+    * MySQL升级的时候要注意：关联语法、运算符优先级等其他可能会发生变化的地方；
 
-======================================================
+### 优化子查询
 
-    6.6 查询优化器的提示（hint）
+尽可能使用关联查询代替子查询，当然MySQL5.6或MariaDB可以考虑使用子查询。
 
-    讲到了很多提示，意在如果我们对优化器选择的执行计划不满意，使用提示来控制最终的执行计划，如上面的 USE INDEX(PRIMARY)，其他还有：HIGH_PRIORITY、LOW_PRIORITY、DELAYED、STRAIGHT_JOIN（上文提到过）、SQL_SMALL_RESULT、SQL_BIG_RESULT、SQL_BUFFER_RESULT、SQL_CACHE、SQL_NO_CACHE、SQL_CALC_FOUND_ROWS、FOR UPDATE、LOCK IN SHARE MODE、USE INDEX、IGNORE INDEX、FORCE INDEX等等。
+### 优化GROUP BY和DISTINCT
 
-======================================================
+这两类查询可以互相转化，可以使用索引来优化，无法使用索引时，GROUP BY使用两种策略来完成：使用临时表或者文件排序来做分组。可以通过配置SQL_BIG_RESULT和SQL_SMALL_RESULT来让优化器按希望的方式运行。
 
-    6.7 优化特定类型的查询
+如果对关联查询做分组，并且按照查找表中的某个列进行分组，那么通常采用查找表的标识列分组的效率会比其他列更高，如
+<pre>
+mysql> SELECT `actor`.`first_name`, `actor`.`last_name`, COUNT(*) 
+  FROM `sakila`.`film_actor`
+  INNER JOIN `sakila`.`actor` USING(`actor_id`)
+  GROUP BY `actor`.`first_name`, `actor`.`last_name`;
 
-    6.7.1 优化 COUNT()查询
+// 优化
 
-    COUNT()常被误解（难道这本书里说的对的？），COUNT()有两个作用，1、统计非NULL列的列植的数量，2、统计返回数据集的行数；常用的是COUNT(*)，*常被误解为所有列，实际上在操作时是忽略所有列，而直接统计所有行数。COUNT(*)中的*与SELECT *中的*是不同的。如果你真想统计结果集的行数，就用 COUNT(*)而不要使用 COUNT(aCol)。
+mysql> SELECT `actor`.`first_name`, `actor`.`last_name`, COUNT(*)
+  FROM `sakila`.`film_actor`
+  INNER JOIN `sakila`.`actor` USING(`actor_id`)
+  GROUP BY `film_actor`.`actor_id`;
+</pre>
 
-   通常以为 MyISAM执行COUNT(*)最快，实际上是有条件的，只有不用 WHERE时，因为MySQL根本不用扫描数据行，也无须去计算，会直接利用存储引擎的特性去获得这个值。当带上 WHERE 上，就需要去扫描去计算了。
+### 优化LIMIT分页
 
-   书中一个优化的例子，将条件反转后可大大加速，如查询 id > 5 的数量有4097行，而反转，查询 id < 5 的，只有几行，然后 用总行数（用 COUNT(*) 获取-常数不费计算）减去 id < 5的，大大优化。但这种情况貌似我提前可以知道 id > 5的数据比 id < 5 的数据多很多才可以。
+LIMIT配合ORDER BY是常见的处理分页的SQL，如果有对应的索引，通常效率会不错，没有索引的话则会需要做大量的文件排序操作。
 
-   能使用近似值的就不必追求精确计算值，代价太高！
+对于偏移量非常大的情况，如LIMIT 10000, 20，MySQL需要查询10020条记录，并且会抛弃前10000条记录。这种语句的优化，要么在页面中限制分页的数量，要么是优化大偏移量的性能。
 
-   6.7.2 优化关联查询
+优化办法是尽可能使用索引覆盖扫描，而不是查询所有的列，然后根据需要做一次关联操作再返回所需的列，如
+<pre>
+mysql> SELECT `film_id`, `description` FROM `sakila`.`film` GROUP BY `title` LIMIT 50, 5;
 
-   这个话题基本整本书都在讨论（还是很晕），注意一下：
+// 优化
+mysql> SELECT `film`.`film_id`, `film`.`description`
+  FROM `sakila`.`film`
+  INNER JOIN (
+    SELECT `flim_id` FROM `sakila`.`film` ORDER BY `title` LIMIT 50, 5
+  ) AS `lim` USING(`film_id`);
+</pre>
 
-   1）确保ON或USING子句中的列上有索引，在创建索引时就要考虑到关联的顺序。
+还可以将LIMIT查询转换为已知位置的查询，让MySQL通过范围扫描获得到对应的结果。如
+<pre>
+mysql> SELECT `film_id`, `description` FROM `sakila`.`film`
+  WHERE poosition BETWEEN 50 AND 54 ORDER BY `position`;
+</pre>
 
+还可以直接从记录到的书签位置开始扫描，如
+<pre>
+mysql> SELECT * FROM `sakila`.`rental`
+  ORDER BY `rental_id` DESC LIMIT 20;
 
+mysql> SELECT * FROM `sakila`.`rental`
+  WHERE `rental_id` < 16030
+  ORDER BY `rental_id` DESC LIMIT 20;
+</pre>
+
+此外，还可以通过预先计算的汇总表优化，或者关联到一个冗余表，冗余表中只包含主键列和需要做排序的数据列。
+
+### 优化SQL_CALC_FOUND_ROWS
+
+### 优化UNION查询
+
+MySQL总是通过创建并填充临时表的方式来执行UNION查询，所有优化比较困难。经常需要手工将WHERE、LIMIT、ORDER BY等子句“下推”到UNION的各个子查询，以便优化器可以充分利用这些条件进行优化，如直接将这些子句冗余地写一份到各个子查询。
+
+除非确实需要服务器消除重复的行，否则就一定要使用UNION ALL，如果没有ALL，MySQL会给临时表加上DISTINCT选项，增加查询代价。
+
+### 静态查询分析
+
+Percona Toolkit中的pt-queryadvisor能够解析查询日志、分析查询模式，然后给出所有可能存在问题的查询，并给出建议。
+
+### 使用用户自定义变量
 

@@ -13,6 +13,12 @@
       }
     }
   },
+  "nagios": {
+    "title": "Nagios使用心得",
+    "subElems": {
+      "config": {"title": "Nagios配置入门"}
+    }
+  },
   "markdown": {
     "title": "markdown规则"
   },

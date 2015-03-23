@@ -3,7 +3,9 @@
     "title": "Vim使用心得",
     "subElems": {
       "base": {"title": "vim基本操作"},
-      "filetype": {"title": "文件类型"},
+      "daily_use_1": {"title": "常用操作1"},
+      "daily_use_2": {"title": "常用操作2"},
+      "daily_use_3": {"title": "常用操作3"},
       "manual": {
         "title": "Vim手册",
         "subElems": {

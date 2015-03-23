@@ -139,96 +139,118 @@ cfg_dir=/path/to/nagios/etc/hosts
 
 该变量指定了Nagios进程使用哪个用户运行。当程序启动完成并开始监控对象之前，Nagios将切换自己的权限并使用该用户权限运行。你可以指定用户或是UID名。
 
-表 5.12. Nagios组
+12 Nagios组
+<pre>
 格式：	nagios_group=<groupname/GID>
 样例：	nagios_group=nagios
+</pre>
 
 该变量用于指定Nagios使用哪个用户组运行。当程序启动完成并开始监控对象之前，Nagios将切换自己的权限并以该用户组权限运行。你可以拽定用户组或GID名。
 
-表 5.13. 通知选项
+13 通知选项
+<pre>
 格式：	enable_notifications=<0/1>
 样例：	enable_notifications=1
 
-该选项决定了Nagios在初始化启动或重启动时是否要送出通知。如果这个选项不使能，Nagios将不会向任何主机或服务送出通知。注意，如果你打开了状态保持选项，Nagios在其启动和重启时将忽略此设置并用这个选项的最近的一个设置(已经保存在状态保持文件)的值来工作，除非你取消了use_retained_program_state选项。如果你想在使能状态保存选项(并且是use_retained_program_state使能)的情况下更改这个选项，你必须要通过合适的外部命令或是通过Web接口来修改它。选项的取值可以是：
+0 = 关闭通知
+1 = 打开通知(默认)
+</pre>
 
-    0 = 关闭通知
-    1 = 打开通知(默认)
+该选项决定了Nagios在初始化启动或重启动时是否要送出通知。如果这个选项不使能，Nagios将不会向任何主机或服务送出通知。注意，如果你打开了状态保持选项，Nagios在其启动和重启时将忽略此设置并用这个选项的最近的一个设置(已经保存在状态保持文件)的值来工作，除非你取消了use_retained_program_state选项。如果你想在使能状态保存选项(并且是use_retained_program_state使能)的情况下更改这个选项，你必须要通过合适的外部命令或是通过Web接口来修改它。
 
-表 5.14. 服务检测执行选项
+14 服务检测执行选项
+<pre>
 格式：	execute_service_checks=<0/1>
 样例：	execute_service_checks=1
 
-这个选项指定了Nagios在初始的启动或重启时是否要执行服务检测。如果这个没有使能，Nagios将不会主动地执行任何服务的检测并且保持一系列的"静默"状态(它仍旧可以接收强制检测除非你已经将accept_passive_service_checks选项关闭)。这个选项经常用于备份被监控服务配置，被监控服务的配置备份在文档冗余安装或设置成一个分布式监控环境中有描述。注意：如果你已经使能了状态保持，Nagios在其启动或重启时将会忽略这个选项设置并使用和旧的设置值(旧值保存于状态保持文件)，除非你关闭了use_retained_program_state选项。如果你想在状态保持使能(和use_retained_program_state选项使能)的情况下修改这个选项，你只得用适当的外部命令或是通过Web接口来修改它。选项可用的值有：
+0 = 不执行服务检测
+1 = 执行服务检测(默认)
+</pre>
 
-    0 = 不执行服务检测
-    1 = 执行服务检测(默认)
+这个选项指定了Nagios在初始的启动或重启时是否要执行服务检测。如果这个没有使能，Nagios将不会主动地执行任何服务的检测并且保持一系列的"静默"状态(它仍旧可以接收强制检测除非你已经将accept_passive_service_checks选项关闭)。这个选项经常用于备份被监控服务配置，被监控服务的配置备份在文档冗余安装或设置成一个分布式监控环境中有描述。注意：如果你已经使能了状态保持，Nagios在其启动或重启时将会忽略这个选项设置并使用和旧的设置值(旧值保存于状态保持文件)，除非你关闭了use_retained_program_state选项。如果你想在状态保持使能(和use_retained_program_state选项使能)的情况下修改这个选项，你只得用适当的外部命令或是通过Web接口来修改它。
 
-表 5.15. 强制服务检测结果接受选项
+15 强制服务检测结果接受选项
+<pre>
 格式：	accept_passive_service_checks=<0/1>
 样例：	accept_passive_service_checks=1
 
-该选项决定了Nagios在其初始化启动或重启后是否要授受强制服务检测，如果它关闭了，Nagios将不会接受任何强制服务检测结果。注意：如果你已经使能了状态保持，Nagios在其启动或重启时将会忽略这个选项设置并使用和旧的设置值(旧值保存于状态保持文件)，除非你关闭了use_retained_program_state选项。如果你想在状态保持使能(和use_retained_program_state选项使能)的情况下修改这个选项，你只得用适当的外部命令或是通过Web接口来修改它。选项可用的值有：
+0 = 不接受强制服务检测结果
+1 = 接受强制服务检测结果(默认)
+</pre>
 
-    0 = 不接受强制服务检测结果
-    1 = 接受强制服务检测结果(默认)
+该选项决定了Nagios在其初始化启动或重启后是否要授受强制服务检测，如果它关闭了，Nagios将不会接受任何强制服务检测结果。注意：如果你已经使能了状态保持，Nagios在其启动或重启时将会忽略这个选项设置并使用和旧的设置值(旧值保存于状态保持文件)，除非你关闭了use_retained_program_state选项。如果你想在状态保持使能(和use_retained_program_state选项使能)的情况下修改这个选项，你只得用适当的外部命令或是通过Web接口来修改它。
 
-表 5.16. 主机检测执行选项
+16 主机检测执行选项
+<pre>
 格式：	execute_host_checks=<0/1>
 样例：	execute_host_checks=1
 
-该选项将决定Nagios在初始地启动或重启时是否执行按需地和有规律规划检测。如果该选项不使能，那么Nagios将不会对任何主机进行检测，然而它仍旧可以接收强制主机检测结果除非你已经将accept_passive_host_checks选项关闭。该选项通常用于监控服务器的配置备份，详细信息请查看冗余安装的配置，或是用于设置一个分布式监控环境中。注意：如果你已经使能retain_state_information状态保持选项，Nagios将在启动和重启时使用旧的选项值(保存于state_retention_file状态保持文件中)而忽略此设置，除非你关闭了use_retained_program_state选项。如果你想在保持选项使能(且use_retained_program_state选项使能)的情况下修改这个选项，你只得用适当的外部命令或是通过Web接口来修改它。选项可用的值有：
+0 = 不执行主机检测
+1 = 执行主机检测(默认)
+</pre>
 
-    0 = 不执行主机检测
-    1 = 执行主机检测(默认)
+该选项将决定Nagios在初始地启动或重启时是否执行按需地和有规律规划检测。如果该选项不使能，那么Nagios将不会对任何主机进行检测，然而它仍旧可以接收强制主机检测结果除非你已经将accept_passive_host_checks选项关闭。该选项通常用于监控服务器的配置备份，详细信息请查看冗余安装的配置，或是用于设置一个分布式监控环境中。注意：如果你已经使能retain_state_information状态保持选项，Nagios将在启动和重启时使用旧的选项值(保存于state_retention_file状态保持文件中)而忽略此设置，除非你关闭了use_retained_program_state选项。如果你想在保持选项使能(且use_retained_program_state选项使能)的情况下修改这个选项，你只得用适当的外部命令或是通过Web接口来修改它。
 
-表 5.17. 强制主机检测接受选项
+17 强制主机检测接受选项
+<pre>
 格式：	accept_passive_host_checks=<0/1>
 样例：	accept_passive_host_checks=1
 
-该选项决定了在Nagios初始启动或重启后是否要接受强制主机检测结果。如果这个选项关闭，Nagios将不再接受任何强制主机检测结果。注意：如果你使能retain_state_information状态保持选项，Nagios将在启动或重启动时使用旧的选项设置(保存于state_retention_file状态保持文件中)而忽略这个设置。除非你已经关闭use_retained_program_state选项。如果你想在保持选项使能(且use_retained_program_state选项使能)的情况下修改这个选项，你只得用适当的外部命令或是通过Web接口来修改它。选项可用的值有：
+0 = 不接受强制主机检测结果
+1 = 接受强制主机检测结果(默认)
+</pre>
 
-    0 = 不接受强制主机检测结果
-    1 = 接受强制主机检测结果(默认)
+该选项决定了在Nagios初始启动或重启后是否要接受强制主机检测结果。如果这个选项关闭，Nagios将不再接受任何强制主机检测结果。注意：如果你使能retain_state_information状态保持选项，Nagios将在启动或重启动时使用旧的选项设置(保存于state_retention_file状态保持文件中)而忽略这个设置。除非你已经关闭use_retained_program_state选项。如果你想在保持选项使能(且use_retained_program_state选项使能)的情况下修改这个选项，你只得用适当的外部命令或是通过Web接口来修改它。
 
-表 5.18. 事件处理选项
+18 事件处理选项
+<pre>
 格式：	enable_event_handlers=<0/1>
 样例：	enable_event_handlers=1
 
-该选项决定了在Nagios初始启动或重启后是否要运行事件处理，如果该选项关闭，Nagios将不做任何主机或服务的事件处理。注意：如果你使能retain_state_information状态保持选项(保存于state_retention_file状态保持文件中)而忽略这个设置，除非你已经关闭use_retained_program_state选项。如果你想在保持选项使能(且use_retained_program_state选项使能)的情况下修改这个选项，你只得用适当的外部命令或是通过Web接口来修改它。选项可用的值有：
+0 = 禁止事件处理
+1 = 打开事件处理(默认)
+</pre>
 
-    0 = 禁止事件处理
-    1 = 打开事件处理(默认)
+该选项决定了在Nagios初始启动或重启后是否要运行事件处理，如果该选项关闭，Nagios将不做任何主机或服务的事件处理。注意：如果你使能retain_state_information状态保持选项(保存于state_retention_file状态保持文件中)而忽略这个设置，除非你已经关闭use_retained_program_state选项。如果你想在保持选项使能(且use_retained_program_state选项使能)的情况下修改这个选项，你只得用适当的外部命令或是通过Web接口来修改它。
 
-表 5.19. 日志回滚方法
+19 日志回滚方法
+<pre>
 格式：	log_rotation_method=<n/h/d/w/m>
 样例：	log_rotation_method=d
 
-该选项决定了你想让Nagios以何种方法回滚你的日志文件。可用的值有：
+n = None (不做日志回滚 － 这个是默认值)
+h = Hourly (每小时做一次日志回滚)
+d = Daily (每天午夜做日志回滚)
+w = Weekly (每周六午夜做日志回滚)
+m = Monthly (每月最后一天的午夜做日志回滚)
+</pre>
 
-    n = None (不做日志回滚 － 这个是默认值)
-    h = Hourly (每小时做一次日志回滚)
-    d = Daily (每天午夜做日志回滚)
-    w = Weekly (每周六午夜做日志回滚)
-    m = Monthly (每月最后一天的午夜做日志回滚)
+该选项决定了你想让Nagios以何种方法回滚你的日志文件。
 
-表 5.20. 日志打包路径
+20 日志打包路径
+<pre>
 格式：	log_archive_path=<path>
 样例：	log_archive_path=/path/to/nagios/var/archives/
+</pre>
 
 该选项将指定一个用于存放回滚日志文件的保存路径。如果没有使用日志回滚功能时会忽略此设置。
 
-表 5.21. 外部命令检查选项
+21 外部命令检查选项
+<pre>
 格式：	check_external_commands=<0/1>
 样例：	check_external_commands=1
 
+0 = 不做外部命令检测
+1 = 检测外部命令(默认值)
+</pre>
+
 该选项决定了Nagios是否要检查存于命令文件里的将要执行的命令。这个选项在你计划通过Web接口来运行CGI命令时必须要打开它。更多的关于外部命令的信息可以查阅这份文档。
 
-    0 = 不做外部命令检测
-    1 = 检测外部命令(默认值)
-
-表 5.22. 外部命令检测间隔
+22 外部命令检测间隔
+<pre>
 格式：	command_check_interval=<xxx>[s]
 样例：	command_check_interval=1
+</pre>
 
 如果你指定了一个数字加一个"s"(如30s)，那么外部检测命令的间隔是这个数值以秒为单位的时间间隔。如果没有用"s"，那么外部检测命令的间隔是以这个数值的“时间单位”的时间间隔，除非你把interval_length的值(下面有说明)从默认60给更改了，这个值的意思是60s，即一分钟。
 
@@ -1057,36 +1079,36 @@ This option determines how much debugging information Nagios should write to the
 样例：	max_debug_file_size=1000000
 
 该选项定义了以字节为单位的debug_file调试文件最大长度。如果文件增至大于该值，将会自动被命名为.old扩展名的文件，如果.old扩展名已经存在，那么旧.old文件将被删除。这可以保证在Nagios调试时磁盘空间不会过多占用而失控。
-5.3. 对象配置概览
-5.3.1. 什么是对象？
+
+对象配置概览
+-------------
+
+### 什么是对象？
 
 对象是指所有在监控和通知逻辑中涉及到的元素。对象的类型包括：
 
-    服务
-    服务组
-    主机
-    主机组
-    联系人
-    联系人组
-    命令
-    时间周期
-    通知扩展
-    通知和执行依赖关系
+    * 服务
+    * 服务组
+    * 主机
+    * 主机组
+    * 联系人
+    * 联系人组
+    * 命令
+    * 时间周期
+    * 通知扩展
+    * 通知和执行依赖关系
 
-更多有关对象和它们之间关系的说明见下面。
-5.3.2. 对象在哪里定义？
+### 对象在哪里定义？
 
 对象可以在一个配置文件cfg_file或是多个由主配置文件对象保存目录cfg_dir里配置文件来定义。
-提示
-当按照快速安装指南进行安装后，几个对象配置文件的样例放在了/path/to/nagios/etc/objects/目录下。可以用这些样例文件来搞清楚对象继承关系并学习如何进行自己的对象定义。
-5.3.3. 对象如何定义？
+提示 当按照快速安装指南进行安装后，几个对象配置文件的样例放在了/path/to/nagios/etc/objects/目录下。可以用这些样例文件来搞清楚对象继承关系并学习如何进行自己的对象定义。
+
+### 对象如何定义？
 
 对象可以在一个用柔性化模板样式来定义，模板可使得对Nagios的配置管理更为容易，有关如果进行对象定义的基本信息可以查阅这篇文件。
-
 一旦熟悉了如何进行对象定义的基础，需要阅读对象继承以在将来应用中配置更为鲁棒(就是尽量使用对象继承关系啦)。经验丰富的使用者可以在对象定义决窍一文中发掘到一些有关对象定义的高级特性.
 
 关于对象的解释
-
 下面在一些主要的对象的解释...
 
     主机是监控逻辑中的核心对象之一。主机的重要属性有：
@@ -1122,56 +1144,67 @@ This option determines how much debugging information Nagios should write to the
         事件处理
         和其他...
 
-5.4. CGI配置文件选项
-注意
+CGI配置文件选项
+----------------
 
-当创建或编辑配置文件时，要遵守如下要求：
+注意 当创建或编辑配置文件时，要遵守如下要求：
 
-    以符号'#'开头的行将视为注释不做处理；
-    变量必须是新起的一行 － 变量之前不能有空格符；
-    变量名是大小写敏感的；
+    * 以符号'#'开头的行将视为注释不做处理；
+    * 变量必须是新起的一行 － 变量之前不能有空格符；
+    * 变量名是大小写敏感的；
 
-5.4.1. 样例配置文件
-提示
+### 样例配置文件
 
-一个CGI的样例配置文件(/path/to/nagios/etc/cgi.cfg)已经安装到位，如果你是按照快速安装指南来操作的话。
-5.4.2. 配置文件的位置
+提示 一个CGI的样例配置文件(/path/to/nagios/etc/cgi.cfg)已经安装到位，如果你是按照快速安装指南来操作的话。
+
+### 配置文件的位置
 
 默认情况下，Nagios期望的CGI配置文件被命名为cgi.cfg并且该配置文件被放在了主配置文件指定的位置。如果你想改变名称和位置，你可以在Apache里配置一个环境变量叫做NAGIO_CGI_CONFIG的(里面设置好文件名和位置)给CGI程序用。如何来做可以查看Apache文档里的说明。
-5.4.3. 配置文件里的变量
+
+### 配置文件里的变量
 
 下面将给出每个主配置文件里的变量与值选项说明...
 
-表 5.124. 主配置文件的位置
+124 主配置文件的位置
+<pre>
 格式：	main_config_file=<file_name>
 举例：	main_config_file=/path/to/nagios/etc/nagios.cfg
+</pre>
 
 它用于指向主配置文件所在的位置。CGI模块需要知道在哪里可以得到主配置文件以取得配置信息、当前的主机和服务的状态等。
 
-表 5.125. HTML文件的系统路径
+125 HTML文件的系统路径
+<pre>
 格式：	physical_html_path=<path>
 举例：	physical_html_path=/path/to/nagios/share
+</pre>
 
 它用于指明用于服务器或工作站上的HTML文件所在的系统路径。Nagios假定文档和图片文件被分别放在了docs/和images/两个子目录下。
 
-表 5.126. URL里的HTML路径
+126 URL里的HTML路径
+<pre>
 格式：	url_html_path=<path>
 举例：	url_html_path=/nagios
+</pre>
 
 如果通过Web浏览器来操作Nagios，你要通过一个URL如http://www.myhost.com/nagios来操作的话，则需要设置为/nagios。一般是用这个URL来操作Nagios的HTML页面。
 
 表 5.127. 应用认证
+<pre>
 格式：	use_authentication=<0/1>
 举例：	use_authentication=1
 
+0 = 不使用认证功能
+1 = 使用认主与授权功能(默认值)
+</pre>
+
 该选项控制着CGI模块里，对于用户操作或是取得信息时是否需要打开认证和授权功能。如果你断定你不使用认证，一定要把CGI命令移走以免没有授权的用户发出Nagios命令。如果不使用认证功能，CGI模块不会向Nagios发出命令，但我同时也建议你也把CGI模块同时移到安全位置。更多的有关设置认证与授权的内容可以查看这个文件。
 
-    0 = 不使用认证功能
-    1 = 使用认主与授权功能(默认值)
-
-表 5.128. 默认用户名
+128 默认用户名
+<pre>
 格式：	default_user_name=<username>
 举例：	default_user_name=guest
+</pre>
 
 用这个变量可以设置一个默认的用户来操作CGI程序。它可以在一个加密的域里(如在防火墙后建立的WEB)不需要WEB认证就可以操作CGI模块。你可能需要这个功能来避免仅仅在一个非加密的服务器上(通过因特网以明文方式来传递你的口令)来做基本的认证。
 
@@ -1228,19 +1261,24 @@ Important:除非你是在一个加密的WEB服务器上并且保证每个进入�
     0 = 允许用户在提交命令时修改名字
     1 = 不许用户提交命令时修改名字(默认值) 
 
-表 5.137. 网络拓扑图的背景图设置
+137 网络拓扑图的背景图设置
+<pre>
 格式：	statusmap_background_image=<image_file>
 举例：	statusmap_background_image=smbackground.gd2
+</pre>
 
 该选项将让你可以在使用网络拓扑图时可以指定一个图形文件做为背景图，如果你选择了使用用户定义坐标来绘制的二维网络拓扑图的话。该背景图文件将不能为其他绘制方式提供背景。它假定这个文件是放在图像文件的路径里了(如/path/to/nagios/share/images)。该路径将自动地在physical_html_path域之后加上"/images"生成路径。注意，这个图像文件的格式可以是GIF、JPEG、PNG或GD2格式。而推荐是GD2格式的文件，因为它可以在生成二维图时降低CPU负荷。
 
-表 5.138. 默认的二维拓扑图层绘制方式
+138 默认的二维拓扑图层绘制方式
+<pre>
 格式：	default_statusmap_layout=<layout_number>
 举例：	default_statusmap_layout=4
+</pre>
 
 这个选项将让你指定出网络拓扑图CGI的默认绘制方式，可用的选项值有：
 
-表 5.139. Statusmap的<layout_number>取值
+139 Statusmap的<layout_number>取值
+<pre>
 Value	Layout Method
 0	用户定义坐标系
 1	深度图
@@ -1249,92 +1287,104 @@ Value	Layout Method
 4	圆形图
 5	圆形图(出标记的)
 6	圆形图(气泡式)
+</pre>
 
-表 5.140. 三维空间的容纳器
+140 三维空间的容纳器
+<pre>
 格式：	statuswrl_include=<vrml_file>
 举例：	statuswrl_include=myworld.wrl
+</pre>
 
 这个选项将让你指定一个你的对象实体在哪个三维空间的容纳器里展现。它默认是文件已经存放在指定的路径下了，该路径由physical_html_path域来指定。注意，这个文件必须是合格的虚拟现实建模(VRML)文件(如你可以在它的专用浏览器里可以查看它)。
 
-表 5.141. 默认三维空间坐标生成算法
+141 默认三维空间坐标生成算法
+<pre>
 格式：	default_statuswrl_layout=<layout_number>
 举例：	default_statuswrl_layout=4
+</pre>
 
 该选项让你指定在三维空间图里对象的三维空间坐标的生成算法。可用的选项值有：
 
-表 5.142. Statuswrl的<layout_number>取值
+142 Statuswrl的<layout_number>取值
+<pre>
 值	绘制算法
 0	用户定义坐标系
 2	折叠树
 3	平衡树
 4	圆形
+</pre>
 
-表 5.143. CGI模块的刷新速率
+143 CGI模块的刷新速率
+<pre>
 格式：	refresh_rate=<rate_in_seconds>
 举例：	refresh_rate=90
+</pre>
 
 该选项将让你指定以秒为单位的对于CGI模块刷新的周期，CGI模块有状态列表、二维拓扑图和扩展信息等CGI模块。
 
-表 5.144. 声音报警
-格式：	
-
+144 声音报警
+<pre>
+# 格式：	
 host_unreachable_sound=<sound_file>
-
 host_down_sound=<sound_file>
-
 service_critical_sound=<sound_file>
-
 service_warning_sound=<sound_file>
-
 service_unknown_sound=<sound_file>
-举例：	
 
+# 举例：	
 host_unreachable_sound=hostu.wav
-
 host_down_sound=hostd.wav
-
 service_critical_sound=critical.wav
-
 service_warning_sound=warning.wav
-
 service_unknown_sound=unknown.wav
+</pre>
 
 这个选项将让你指定在查看状态列表时如果有故障发生，你的浏览器里将发出哪个声音文件。如果有故障将按指定的临界故障类型来播放不同的声音文件。这些临界的故障类型是一个或多个主机不可达，至少是一个或多个服务处于未知的状态(见上例中的次序)。声音文件将假定你放在了HTML目录的"media/"子目录里(如/path/to/nagios/share/media)。
 
-表 5.145. Ping语法
+145 Ping语法
+<pre>
 格式：	ping_syntax=<command>
 举例：	ping_syntax=/bin/ping -n -U -c 5 $HOSTADDRESS$
+</pre>
 
 这个选项给出了当从WAP接口(使用statuswml CGI)做PING一个主机操作时的PING的语法。你必须给出包含全路径名的PING的执行文件及全部参数的命令行。命令中使用$HOSTADDRESS$宏来预指定在命令执行前对哪个地址替换并执行PING检测。
 
-表 5.146. 扩展HTML标记选项
+146 扩展HTML标记选项
+<pre>
 格式：	escape_html_tags=[0/1]
 举例：	escape_html_tags=1
+</pre>
 
 这个选项将决定是否在主机和服务(插件)的检测输出中包含使用HTML的扩展选项。如果你使能了它，你的插件将不能使用可点击的超链接标记。
 
-表 5.147. 注释的URL指向
+147 注释的URL指向
+<pre>
 格式：	notes_url_target=[target]
 举例：	notes_url_target=_blank
+</pre>
 
 这个选项决定了你的注释URL必须要显示的URL目标。合法的选项内容包括_blank、_self、_top、_parent或是其他合法目标的名字。
 
-表 5.148. 动作的URL指向
+148 动作的URL指向
+<pre>
 格式：	action_url_target=[target]
 举例：	action_url_target=_blank
+</pre>
 
 这个选项给定了框内对象的动作里显示的动作URL的目标。合法的选项值包括_blank、_self、_top、_parent或是任何其他合法目标名字。
 
-表 5.149. Splunk集成选项
+149 Splunk集成选项
+<pre>
 格式：	enable_splunk_integration=[0/1]
 举例：	enable_splunk_integration=1
+</pre>
 
 这个选项决定了在WEB接口里与Splunk集成功能是否集成。如果使能它，你页面中将在许多地方呈现出"Splunk It"的链接，CGI模块页面(日志文件、告警历史、主机和服务的详细信息等)里都有。如果你想对特别的故障发生想知道原诿时很有用。更多关于Splunk的信息请访问http://www.splunk.com/。
 
-表 5.150. Splunk URL
+150 Splunk URL
+<pre>
 格式：	splunk_url=<path>
 举例：	splunk_url=http://127.0.0.1:8000/
+</pre>
 
 这个选项设置了指向Splunk网站的URL。在enable_splunk_integration使能时这个URL被CGI模块用于指向Splunk。
-上一页 	 	 下一页
-第 4 章 入门 	起始页	 第 6 章 Nagios监控与配置的基本概念

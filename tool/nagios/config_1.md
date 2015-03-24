@@ -256,287 +256,342 @@ m = Monthly (每月最后一天的午夜做日志回滚)
 
 注意：将这个值设置为-1可令Nagios尽可能频繁地对外命令进行检测。在进行其他任务之前，Nagios每次都将会读入并处理保存于命令文件之中的全部命令以进行命令检查。更多的关于外部命令的信息可以查阅这份文档。
 
-表 5.23. 外部命令文件
+23 外部命令文件
+<pre>
 格式：	command_file=<file_name>
 样例：	command_file=/path/to/nagios/var/rw/nagios.cmd
+</pre>
 
 这是一个Nagios用于外部命令检测处理的文件，命令CGI程序模块将命令写入该文件，外部命令文件实现成一个命名管道(先入先出)，在Nagios启动时创建它，并在关闭时删除它。如果在Nagios启动时该文件已经存在，那么Nagios会给出一个错误信息后中止。更多的关于外部命令的信息可以查阅这份文档。
 
-表 5.24. 外部命令缓冲队列数
+24 外部命令缓冲队列数
+<pre>
 格式：	external_command_buffer_slots=<#>
 样例：	external_command_buffer_slots=512
+</pre>
 
 注意：这是个高级特性。该选项决定了Nagios将使用多少缓冲队列来缓存外部命令，外部命令是从一个工作线程从外部命令文件将命令读入的，但这些外部命令还没有被Nagios的主守护程序处理。缓冲中的每个位置可以处理一个外部命令，所以这个选项决定了有多少命令可以被缓冲处理。为了对一个有大量强制检测系统(比如分布式系统安装)进行安装时，你可能需要降低这个值。你要考虑使用MRTG工具来绘制外部命令缓冲的利用率图表，如何配置绘制图表可阅读这篇文档。
 
-表 5.25. 互锁文件
+25 互锁文件
+<pre>
 格式：	lock_file=<file_name>
 样例：	lock_file=/tmp/nagios.lock
+</pre>
 
 该选项指定了Nagios在以守护态运行(以-d命令行参数运行)时在哪个位置上创建互锁文件。该文件包含有运行Nagios的进程id值(PID)。
 
-表 5.26. 状态保持选项
+26 状态保持选项
+<pre>
 格式：	retain_state_information=<0/1>
 样例：	retain_state_information=1
 
+0 = 不保存状态保持信息
+1 = 保留状态保持信息(默认)
+</pre>
+
 该选项决定了Nagios是否要在程序的两次启动之间保存主机和服务的状态信息。如果你使能了这个选项，你应预先给出了state_retention_file变量的值，当选项使能时，Nagios将会在程序停止(或重启)时保存全部的主机和服务的状态信息并且会在启动时再次预读入保存的状态信息。
 
-    0 = 不保存状态保持信息
-    1 = 保留状态保持信息(默认)
-
-表 5.27. 状态保持文件
+27 状态保持文件
+<pre>
 格式：	state_retention_file=<file_name>
 样例：	state_retention_file=/path/to/nagios/var/retention.dat
+</pre>
 
 该文件用于在Nagios停止之前保存状态、停机时间和注释等信息。当Nagios重启时它会在开始监控工作之前使用保存于这个文件里的信息用于初始化主机与服务的状态。为使Nagios在程序的启动之间利用状态保持信息，你必须使能retain_state_information选项。
 
-表 5.28. 自动状态保持的更新间隔
+28 自动状态保持的更新间隔
+<pre>
 格式：	retention_update_interval=<minutes>
 样例：	retention_update_interval=60
+</pre>
 
 该选项决定了Nagios需要以什么频度(分钟为单位)在正常操作时自动地保存状态保持信息。如果你把这个值设置为0，Nagios将不会以规则的间隔保存状态保持数据，但是Nagios仍旧会在停机或重启之前做保存状态保持数据的工作。如果你关闭了状态保持功能(用retain_state_information选项设置)，这个选项值将无效。
 
-表 5.29. 程序所用状态的使用选项
+29 程序所用状态的使用选项
+<pre>
 格式：	use_retained_program_state=<0/1>
 样例：	use_retained_program_state=1
 
+0 = 不使用程序变量的状态值
+1 = 使用状态保持文件中的程序变量状态记录(默认)
+</pre>
+
 这个设置将决定了Nagios是否要使用保存于状态保持文件之中的值以更新程序范围内的变量状态。有些程序范围内的变量的状态将在程序重启时被保存于状态保持文件之中，包括enable_notifications、enable_flap_detection、enable_event_handlers、execute_service_checks和accept_passive_service_checks选项。如果你没有使用retain_state_information状态保持选项使能，这个选项将无效。
 
-    0 = 不使用程序变量的状态值
-    1 = 使用状态保持文件中的程序变量状态记录(默认)
-
-表 5.30. 使用保持计划表信息选项
+30 使用保持计划表信息选项
+<pre>
 格式：	use_retained_scheduling_info=<0/1>
 样例：	use_retained_scheduling_info=1
 
+0 = 不使用计划表信息
+1 = 使用保存的计划表信息(默认)
+</pre>
+
 该选项决定Nagios在重启时是否要使用主机和服务的保持计划表信息(下次检测时间)。如果增加了很多数量(或很大百分比)的主机和服务，建议你在首次重启动Nagios时关闭选项，因为这个选项将会使初始检测误入歧途。其他情况下你可以要使能这个选项。
 
-    0 = 不使用计划表信息
-    1 = 使用保存的计划表信息(默认)
-
-表 5.31. 保持主机和服务属性掩码
-格式：	
-
+31 保持主机和服务属性掩码
+<pre>
+格式：
 retained_host_attribute_mask=<number>
-
 retained_service_attribute_mask=<number>
 样例：	
-
 retained_host_attribute_mask=0
-
 retained_service_attribute_mask=0
+</pre>
 
 警告：这是个高级特性。你需要读一下源程序以看清楚它是如何起效果的。
-
 该选项决定了哪个主机和服务的属性在程序重启时不会被保留。这些选项值是与指定的"MODATTR_"值进行按位与运算出的，MODATTR_在源程序的include/common.h里定义，默认情况下，全部主机和服务的属性都会被保持。
 
-表 5.32. 保持进程属性掩码
+32 保持进程属性掩码
+<pre>
 格式：	
-
 retained_process_host_attribute_mask=<number>
-
 retained_process_service_attribute_mask=<number>
 样例：	
-
 retained_process_host_attribute_mask=0
-
 retained_process_service_attribute_mask=0
+</pre>
 
 警告：这是个高级特性。你需要读一下源程序以看清楚它是如何起效果的。
 
 该选项决定了哪个进程属性在程序重启时不会被保留。有两个属性掩码因为经常是主机和服务的进程属性可以分别被修改。例如，主机检测在程序层面上被关闭，而服务检测仍旧被打开。这些选项值是与指定的"MODATTR_"值进行按位与运算出的，MODATTR_在源程序的include/common.h里定义，默认情况下，全部主机和服务的属性都会被保持。
 
-表 5.33. 保持联系人属性掩码
+33 保持联系人属性掩码
+<pre>
 格式：	
-
 retained_contact_host_attribute_mask=<number>
-
 retained_contact_service_attribute_mask=<number>
 样例：	
-
 retained_contact_host_attribute_mask=0
-
 retained_contact_service_attribute_mask=0
+</pre>
 
 警告：这是个高级特性。你需要读一下源程序以看清楚它是如何起效果的。
 
 该选项决定了哪个联系人属性在程序重启时不会被保留。有两个属性掩码因为经常是主机和服务的联系人属性可以分别被修改。这些选项值是与指定的"MODATTR_"值进行按位与运算出的，MODATTR_在源程序的include/common.h里定义，默认情况下，全部主机和服务的属性都会被保持。
 
-表 5.34. Syslog日志选项
+34 Syslog日志选项
+<pre>
 格式：	use_syslog=<0/1>
 样例：	use_syslog=1
 
+0 = 不使用Syslog机制
+1 = 使用Syslog机制
+</pre>
+
 该选项决定了是否将日志信息记录到本地的Syslog中。可用的值有：
 
-    0 = 不使用Syslog机制
-    1 = 使用Syslog机制
-
-表 5.35. 通知记录日志选项
+35 通知记录日志选项
+<pre>
 格式：	log_notifications=<0/1>
 样例：	log_notifications=1
 
+0 = 不记录通知
+1 = 记录通知
+</pre>
+
 该选项决定了是否将通知信息记录进行记录，如果有很多联系人或是有规律性的服务故障时，记录文件将会增长很快。使用这个选项来保存已发出的通知记录。
 
-    0 = 不记录通知
-    1 = 记录通知
-
-表 5.36. 服务检测重试记录选项
+36 服务检测重试记录选项
+<pre>
 格式：	log_service_retries=<0/1>
 样例：	log_service_retries=1
 
+0 = 不记录服务检测重试
+1 = 记录服务检测重试
+</pre>
+
 该选项决定了是否将服务检测重试进行记录。服务检测重试发生在服务检测结果返回一个异常状态信息之时，而且你已经配置Nagios在对故障出现时进行一次以上的服务检测重试。此时有服务状态被认为是处理“软”故障状态。当调试Nagios或对服务的事件处理进行测试时记录下服务检测的重试是非常有用的。
 
-    0 = 不记录服务检测重试
-    1 = 记录服务检测重试
-
-表 5.37. 主机检测重试记录选项
+37 主机检测重试记录选项
+<pre>
 格式：	log_host_retries=<0/1>
 样例：	log_host_retries=1
 
+0 = 不记录主机检测重试
+1 = 记录主机检测重试
+</pre>
+
 该选项决定了是否将主机检测重试进行记录。当调试Nagios或对主机的事件处理进行测试时记录下主机检测的重试是非常有用的。
 
-    0 = 不记录主机检测重试
-    1 = 记录主机检测重试
-
-表 5.38. 事件处理记录选项
+38 事件处理记录选项
+<pre>
 格式：	log_event_handlers=<0/1>
 样例：	log_event_handlers=1
 
+0 = 不记录事件处理
+1 = 记录事件处理
+</pre>
+
 该选项决定了是否将服务和主机的事件处理进行记录。一旦发生服务或主机状态迁移时，可选的事件处理命令会被执行。当调试Nagios或首次尝试事件处理脚本时记录下事件处理是非常有用的。
 
-    0 = 不记录事件处理
-    1 = 记录事件处理
-
-表 5.39. 初始状态记录选项
+39 初始状态记录选项
+<pre>
 格式：	log_initial_states=<0/1>
 样例：	log_initial_states=1
 
+0 = 不记录初始状态(默认)
+1 = 记录初始状态
+</pre>
+
 该选项决定了Nagios是否要强行记录全部的主机和服务的初始状态，即便状态报告是OK也要记录。只是在第一次检测发现主机和服务有异常时才会记录下初始状态。如果想用应用程序扫描一段时间内的主机和服务状态以生成统计报告时，使能这个选项将有很有帮助。
 
-    0 = 不记录初始状态(默认)
-    1 = 记录初始状态
-
-表 5.40. 外部命令记录选项
+40 外部命令记录选项
+<pre>
 格式：	log_external_commands=<0/1>
 样例：	log_external_commands=1
 
+0 = 不记录外部命令
+1 = 记录外部命令(默认)
+</pre>
+
 该选项决定了Nagios是否要记录外部命令，外部命令是从command_file外部命令文件中提取的。注意：这个选项并不控制是否要对强制服务检测 (一种外部命令类型)进行记录。为使能或关闭对强制服务检测的记录，使用log_passive_checks强制检测记录选项。
 
-    0 = 不记录外部命令
-    1 = 记录外部命令(默认)
-
-表 5.41. 强制检测记录选项
+41 强制检测记录选项
+<pre>
 格式：	log_passive_checks=<0/1>
 样例：	log_passive_checks=1
 
+0 = 不记录强制检测
+1 = 记录强制检测(默认)
+</pre>
+
 该选项决定了Nagios是否要记录来自于command_file外部命令文件的强制主机和强制服务检测命令。如果要设置一个分布式监控环境或是计划在规整的基础上要对大量的强制检测的结果进行处理时，需要关闭这个选项以防止日志文件过份增长。
 
-    0 = 不记录强制检测
-    1 = 记录强制检测(默认)
-
-表 5.42. 全局主机事件处理选项
+42 全局主机事件处理选项
+<pre>
 格式：	global_host_event_handler=<command>
 样例：	global_host_event_handler=log-host-event-to-db
+</pre>
 
 该选项指定了当每个主机状态迁移时需要执行的主机事件处理命令。全局事件处理命令将优于在每个主机定义的事件处理命令而立即执行。命令参数是在对象配置文件里定义的命令的短名称。由event_handler_timeout事件处理超时选项控制的这个命令可运行的最大次数。更多的有关事件处理的信息可以查阅这篇文档。
 
-表 5.43. 全局服务事件处理选项
+43 全局服务事件处理选项
+<pre>
 格式：	global_service_event_handler=<command>
 样例：	global_service_event_handler=log-service-event-to-db
+</pre>
 
 该选项指定了当每个服务状态迁移时需要执行的服务事件处理命令。全局事件处理命令将优于在每个服务定义的事件处理命令而立即执行。命令参数是在对象配置文件里定义的命令的短名称。由event_handler_timeout事件处理超时选项控制的这个命令可运行的最大次数。更多的有关事件处理的信息可以查阅这篇文档。
 
-表 5.44. 检测休止时间间隔
+44 检测休止时间间隔
+<pre>
 格式：	sleep_time=<seconds>
 样例：	sleep_time=1
+</pre>
 
 它指定了Nagios在进行计划表的下一次服务或主机检测命令执行之前应该休止多少秒。注意Nagios只是在已经进行了服务故障的排队检测之后才会休止。
 
-表 5.45. 服务检测迟滞间隔计数方法
+45 服务检测迟滞间隔计数方法
+<pre>
 格式：	service_inter_check_delay_method=<n/d/s/x.xx>
 样例：	service_inter_check_delay_method=s
 
+n = Don't use any delay - schedule all service checks to run immediately (i.e. at the same time!)
+d = Use a "dumb" delay of 1 second between service checks
+s = Use a "smart" delay calculation to spread service checks out evenly (default)
+x.xx = Use a user-supplied inter-check delay of x.xx seconds 
+</pre>
+
 该选项容许你控制服务检测将如何初始展开事件队列。 Using a "smart" delay calculation (the default) will cause Nagios to calculate an average check interval and spread initial checks of all services out over that interval, thereby helping to eliminate CPU load spikes. Using no delay is generally not recommended, as it will cause all service checks to be scheduled for execution at the same time. This means that you will generally have large CPU spikes when the services are all executed in parallel. More information on how to estimate how the inter-check delay affects service check scheduling can be found here. Values are as follows:
 
-    n = Don't use any delay - schedule all service checks to run immediately (i.e. at the same time!)
-    d = Use a "dumb" delay of 1 second between service checks
-    s = Use a "smart" delay calculation to spread service checks out evenly (default)
-    x.xx = Use a user-supplied inter-check delay of x.xx seconds 
-
-表 5.46. 最大服务检测传播时间
+46 最大服务检测传播时间
+<pre>
 格式：	max_service_check_spread=<minutes>
 样例：	max_service_check_spread=30
+</pre>
 
 This option determines the maximum number of minutes from when Nagios starts that all services (that are scheduled to be regularly checked) are checked. This option will automatically adjust the service_inter_check_delay_methodservice inter-check delay method (if necessary) to ensure that the initial checks of all services occur within the timeframe you specify. In general, this option will not have an affect on service check scheduling if scheduling information is being retained using the use_retained_scheduling_infouse_retained_scheduling_info option. 默认值是30分钟。
 
-表 5.47. 服务交错因子
+47 服务交错因子
+<pre>
 格式：	service_interleave_factor=<s|x>
 样例：	service_interleave_factor=s
 
+x = A number greater than or equal to 1 that specifies the interleave factor to use. An interleave factor of 1 is equivalent to not interleaving the service checks.
+s = Use a "smart" interleave factor calculation (default) 
+</pre>
+
 This variable determines how service checks are interleaved. Interleaving allows for a more even distribution of service checks, reduced load on remote hosts, and faster overall detection of host problems. Setting this value to 1 is equivalent to not interleaving the service checks (this is how versions of Nagios previous to 0.0.5 worked). Set this value to s (smart) for automatic calculation of the interleave factor unless you have a specific reason to change it. The best way to understand how interleaving works is to watch the status CGI (detailed view) when Nagios is just starting. You should see that the service check results are spread out as they begin to appear. More information on how interleaving works can be found here.
 
-    x = A number greater than or equal to 1 that specifies the interleave factor to use. An interleave factor of 1 is equivalent to not interleaving the service checks.
-    s = Use a "smart" interleave factor calculation (default) 
-
-表 5.48. 最大并发服务检测数
+48 最大并发服务检测数
+<pre>
 格式：	max_concurrent_checks=<max_checks>
 样例：	max_concurrent_checks=20
+</pre>
 
 该选项可指定在任意给定时间里可被同时运行的服务检测命令的最大数量。如果指定这个值为1，则说明不允许任何并行服务检测，如果指定为0(默认值)则是对并行服务检测。你须按照可运行Nagios的机器上的机器资源情况修改这个值，因为它会直接影响系统最大负荷，它施加于系统(处理器利用率、内存使用率等)之上。更多的关于如何评估需要设置多少并行检测值的信息可以查阅这篇文档。
 
-表 5.49. 检测结果的回收频度
+49 检测结果的回收频度
+<pre>
 格式：	check_result_reaper_frequency=<frequency_in_seconds>
 样例：	check_result_reaper_frequency=5
+</pre>
 
 该选项控制检测结果的回收事件的处理频度(以秒为单位)。从主机和服务的检测过程里“回收”事件处理结果将是对已经执行结束的检测。事件的构成在Nagios里是监控逻辑里的核心内容。
 
-表 5.50. 最大检测结果回收时间段
+50 最大检测结果回收时间段
+<pre>
 格式：	max_check_result_reaper_time=<seconds>
 样例：	max_check_result_reaper_time=30
+</pre>
 
 该选项决定主机和服务检测结果回收时对结果回收时间段的控制，这个值是个以秒为单位的最大时间跨度。从主机和服务的检测过程里“回收”事件处理结果将是对已经执行结束的检测。如果有许多结果要处理，回收事件过程将占用很长时间来完成它，这将延迟对新的主机和服务检测的执行。该选项可以限制从检测结果得到与回收处理之间的最大时间间隔以使Nagios可以完成对其他监控逻辑的转换处理。
 
-表 5.51. 检测结果保存路径
+51 检测结果保存路径
+<pre>
 格式：	check_result_path=<path>
 样例：	check_result_path=/var/spool/nagios/checkresults
+</pre>
 
 该选项决定了Nagios将在处理检测结果之前使用哪个目录来保存主机和服务检测结果。这个目录不能保存其他文件，因为Nagios会周期性地清理这个目录下的旧文件(更多信息见max_check_result_file_age选项)。
 
 注意：确保只有一个Nagios的实例在操作检测结果保存路径。如果有多个Nagios的实例来操作相同的目录，将会因为错误的Nagios实例不正确地处理导致有错误结果！
 
-表 5.52. 检测结果文件的最大生存时间
+52 检测结果文件的最大生存时间
+<pre>
 格式：	max_check_result_file_age=<seconds>
 样例：	max_check_result_file_age=3600
+</pre>
 
 该选项决定用最大多少秒来限定那些在check_result_path设置所指向目录里的检测结果文件是合法的。如果检测结果文件超出了这个门限，Nagios将会把过旧的文件删除而且不会处理内含的检测结果。若设置该选项为0，Nagios将处理全部的检测结果文件－即便这些文件比你的硬件还老旧。
 
-表 5.53. 主机检测迟滞间隔计数方式
+53 主机检测迟滞间隔计数方式
+<pre>
 格式：	host_inter_check_delay_method=<n/d/s/x.xx>
 样例：	host_inter_check_delay_method=s
 
+n = Don't use any delay - schedule all host checks to run immediately (i.e. at the same time!)
+d = Use a "dumb" delay of 1 second between host checks
+s = Use a "smart" delay calculation to spread host checks out evenly (default)
+x.xx = Use a user-supplied inter-check delay of x.xx seconds 
+</pre>
+
 This option allows you to control how host checks that are scheduled to be checked on a regular basis are initially "spread out" in the event queue. Using a "smart" delay calculation (the default) will cause Nagios to calculate an average check interval and spread initial checks of all hosts out over that interval, thereby helping to eliminate CPU load spikes. Using no delay is generally not recommended. Using no delay will cause all host checks to be scheduled for execution at the same time. More information on how to estimate how the inter-check delay affects host check scheduling can be found here.Values are as follows:
 
-    n = Don't use any delay - schedule all host checks to run immediately (i.e. at the same time!)
-    d = Use a "dumb" delay of 1 second between host checks
-    s = Use a "smart" delay calculation to spread host checks out evenly (default)
-    x.xx = Use a user-supplied inter-check delay of x.xx seconds 
-
-表 5.54. 最大主机检测传播时间
+54 最大主机检测传播时间
+<pre>
 格式：	max_host_check_spread=<minutes>
 样例：	max_host_check_spread=30
+</pre>
 
 This option determines the maximum number of minutes from when Nagios starts that all hosts (that are scheduled to be regularly checked) are checked. This option will automatically adjust the host_inter_check_delay_methodhost inter-check delay method (if necessary) to ensure that the initial checks of all hosts occur within the timeframe you specify. In general, this option will not have an affect on host check scheduling if scheduling information is being retained using the use_retained_scheduling_infouse_retained_scheduling_info option. Default value is 30 (minutes).
 
-表 5.55. 计数间隔长度
+55 计数间隔长度
+<pre>
 格式：	interval_length=<seconds>
 样例：	interval_length=60
+</pre>
 
 该选项指定了“单位间隔”是多少秒数，单位间隔用于计数计划队列处理、再次通知等。单位间隔在对象配置文件被用于决定以何频度运行服务检测、以何频度与联系人再通知等。
 
 重要：默认值是60，这说明在对象配置文件里设定的“单位间隔”是60秒(1分钟)。我没测试过其他值，所以如果要用其他值要自担风险！
 
-表 5.56. 自动计划检测选项
+56 自动计划检测选项
+<pre>
 格式：	auto_reschedule_checks=<0/1>
 样例：	auto_reschedule_checks=1
+</pre>
 
 该选项决定了Nagios是否要试图自动地进行计划的自主检测主机与服务以使在之后的时间里检测更为“平滑”。这可以使得监控主机保持一个均衡的负载，也使得在持续检测之间的保持相对一致，其代价是要更刚性地按计划执行检测工作。
 
@@ -883,84 +938,107 @@ This option allows you to enable or disable checks for orphaned service checks. 
     0 = Don't check for orphaned service checks
     1 = Check for orphaned service checks (default) 
 
-表 5.101. 孤立主机检测选项
+101 孤立主机检测选项
+<pre>
 格式：	check_for_orphaned_hosts=<0/1>
 样例：	check_for_orphaned_hosts=1
 
+0 = Don't check for orphaned host checks
+1 = Check for orphaned host checks (default) 
+</pre>
+
 This option allows you to enable or disable checks for orphaned hoste checks. Orphaned host checks are checks which have been executed and have been removed from the event queue, but have not had any results reported in a long time. Since no results have come back in for the host, it is not rescheduled in the event queue. This can cause host checks to stop being executed. Normally it is very rare for this to happen - it might happen if an external user or process killed off the process that was being used to execute a host check. If this option is enabled and Nagios finds that results for a particular host check have not come back, it will log an error message and reschedule the host check. If you start seeing host checks that never seem to get rescheduled, enable this option and see if you notice any log messages about orphaned hosts.
 
-    0 = Don't check for orphaned host checks
-    1 = Check for orphaned host checks (default) 
-
-表 5.102. 服务更新检测选项
+102 服务更新检测选项
+<pre>
 格式：	check_service_freshness=<0/1>
 样例：	check_service_freshness=0
 
+0 = Don't check service freshness
+1 = Check service freshness (default) 
+</pre>
+
 This option determines whether or not Nagios will periodically check the "freshness" of service checks. Enabling this option is useful for helping to ensure that passive service checks are received in a timely manner. More information on freshness checking can be found here.
 
-    0 = Don't check service freshness
-    1 = Check service freshness (default) 
-
-表 5.103. 服务更新检测间隔
+103 服务更新检测间隔
+<pre>
 格式：	service_freshness_check_interval=<seconds>
 样例：	service_freshness_check_interval=60
+</pre>
 
 This setting determines how often (in seconds) Nagios will periodically check the "freshness" of service check results. If you have disabled service freshness checking (with the check_service_freshnesscheck_service_freshness option), this option has no effect. More information on freshness checking can be found here.
 
-表 5.104. 主机更新检测选项
+104 主机更新检测选项
+<pre>
 格式：	check_host_freshness=<0/1>
 样例：	check_host_freshness=0
 
+0 = Don't check host freshness
+1 = Check host freshness (default) 
+</pre>
+
 This option determines whether or not Nagios will periodically check the "freshness" of host checks. Enabling this option is useful for helping to ensure that passive host checks are received in a timely manner. More information on freshness checking can be found here.
 
-    0 = Don't check host freshness
-    1 = Check host freshness (default) 
-
-表 5.105. 主机更新检测间隔
+105 主机更新检测间隔
+<pre>
 格式：	host_freshness_check_interval=<seconds>
 样例：	host_freshness_check_interval=60
+</pre>
 
 This setting determines how often (in seconds) Nagios will periodically check the "freshness" of host check results. If you have disabled host freshness checking (with the check_host_freshnesscheck_host_freshness option), this option has no effect. More information on freshness checking can be found here.
 
-表 5.106. Additional Freshness Threshold Latency Option
+106 Additional Freshness Threshold Latency Option
+<pre>
 格式：	additional_freshness_latency=<#>
 样例：	additional_freshness_latency=15
+</pre>
 
 This option determines the number of seconds Nagios will add to any host or services freshness threshold it automatically calculates (e.g. those not specified explicity by the user). More information on freshness checking can be found here.
 
-表 5.107. Embedded Perl Interpreter Option
+107 Embedded Perl Interpreter Option
+<pre>
 格式：	enable_embedded_perl=<0/1>
 样例：	enable_embedded_perl=1
+</pre>
 
 This setting determines whether or not the embedded Perl interpreter is enabled on a program-wide basis. Nagios must be compiled with support for embedded Perl for this option to have an effect. More information on the embedded Perl interpreter can be found here.
 
-表 5.108. Embedded Perl Implicit Use Option
+108 Embedded Perl Implicit Use Option
+<pre>
 格式：	use_embedded_perl_implicitly=<0/1>
 样例：	use_embedded_perl_implicitly=1
+</pre>
 
 This setting determines whether or not the embedded Perl interpreter should be used for Perl plugins/scripts that do not explicitly enable/disable it. Nagios must be compiled with support for embedded Perl for this option to have an effect. More information on the embedded Perl interpreter and the effect of this setting can be found here.
 
-表 5.109. Date Format
+109 Date Format
+<pre>
 格式：	date_format=<option>
 样例：	date_format=us
+</pre>
 
 This option allows you to specify what kind of date/time format Nagios should use in the web interface and date/time macros. Possible options (along with example output) include:
 
-表 5.110. 
+110. 
+<pre>
 选项	输出格式	输出样例
 us	MM/DD/YYYY HH:MM:SS	06/30/2002 03:15:00
 euro	DD/MM/YYYY HH:MM:SS	30/06/2002 03:15:00
 iso8601	YYYY-MM-DD HH:MM:SS	2002-06-30 03:15:00
 strict-iso8601	YYYY-MM-DDTHH:MM:SS	2002-06-30T03:15:00
+</pre>
 
-表 5.111. 时区选项
+111 时区选项
+<pre>
 格式：	use_timezone=<tz>
 样例：	use_timezone=US/Mountain
+</pre>
 
 This option allows you to override the default timezone that this instance of Nagios runs in. Useful if you have multiple instances of Nagios that need to run from the same server, but have different local times associated with them. If not specified, Nagios will use the system configured timezone.
 
 Note: If you use this option to specify a custom timezone, you will also need to alter the Apache configuration directives for the CGIs to specify the timezone you want. Example:
 
+<pre>
 <Directory "/path/to/nagios/sbin/">
 
 SetEnv TZ "US/Mountain"
@@ -968,68 +1046,83 @@ SetEnv TZ "US/Mountain"
 ...
 
 </Directory>
+</pre>
 
-表 5.112. 非法对象名字符
+112 非法对象名字符
+<pre>
 格式：	illegal_object_name_chars=<chars...>
 样例：	illegal_object_name_chars=`~!$%^&*"|'<>?,()=
+</pre>
 
 This option allows you to specify illegal characters that cannot be used in host names, service descriptions, or names of other object types. Nagios will allow you to use most characters in object definitions, but I recommend not using the characters shown in the example above. Doing may give you problems in the web interface, notification commands, etc.
 
-表 5.113. 非法宏输出字符
+113 非法宏输出字符
+<pre>
 格式：	illegal_macro_output_chars=<chars...>
 样例：	illegal_macro_output_chars=`~$^&"|'<>
+</pre>
 
 This option allows you to specify illegal characters that should be stripped from macros before being used in notifications, event handlers, and other commands. This DOES NOT affect macros used in service or host check commands. You can choose to not strip out the characters shown in the example above, but I recommend you do not do this. Some of these characters are interpreted by the shell (i.e. the backtick) and can lead to security problems. The following macros are stripped of the characters you specify:
 
 $HOSTOUTPUT$, $HOSTPERFDATA$, $HOSTACKAUTHOR$, $HOSTACKCOMMENT$, $SERVICEOUTPUT$, $SERVICEPERFDATA$, $SERVICEACKAUTHOR$, and $SERVICEACKCOMMENT$
 
-表 5.114. 正则表达式选项
+114 正则表达式选项
+<pre>
 格式：	use_regexp_matching=<0/1>
 样例：	use_regexp_matching=0
 
+0 = Don't use regular expression matching (default)
+1 = Use regular expression matching 
+</pre>
+
 This option determines whether or not various directives in your 对象定义 will be processed as regular expressions. More information on how this works can be found here.
 
-    0 = Don't use regular expression matching (default)
-    1 = Use regular expression matching 
-
-表 5.115. True Regular Expression Matching Option
+115 True Regular Expression Matching Option
+<pre>
 格式：	use_true_regexp_matching=<0/1>
 样例：	use_true_regexp_matching=0
 
+0 = Don't use true regular expression matching (default)
+1 = Use true regular expression matching 
+</pre>
+
 If you've enabled regular expression matching of various object directives using the use_regexp_matching option, this option will determine when object directives are treated as regular expressions. If this option is disabled (the default), directives will only be treated as regular expressions if the contain *, ?, +, or \.. If this option is enabled, all appropriate directives will be treated as regular expression - be careful when enabling this! More information on how this works can be found here.
 
-    0 = Don't use true regular expression matching (default)
-    1 = Use true regular expression matching 
-
-表 5.116. 管理员EMail帐号
+116 管理员EMail帐号
+<pre>
 格式：	admin_email=<email_address>
 样例：	admin_email=root@localhost.localdomain
+</pre>
 
 This is the email address for the administrator of the local machine (i.e. the one that Nagios is running on). This value can be used in notification commands by using the $ADMINEMAIL$macro.
 
-表 5.117. 管理员BP机帐号
+117 管理员BP机帐号
+<pre>
 格式：	admin_pager=<pager_number_or_pager_email_gateway>
 样例：	admin_pager=pageroot@localhost.localdomain
+</pre>
 
 This is the pager number (or pager email gateway) for the administrator of the local machine (i.e. the one that Nagios is running on). The pager number/address can be used in notification commands by using the $ADMINPAGER$macro.
 
-表 5.118. Event Broker Options
+118 Event Broker Options
+<pre>
 格式：	event_broker_options=<#>
 样例：	event_broker_options=-1
 
+0 = Broker nothing
+-1 = Broker everything
+# = See BROKER_* definitions in source code (include/broker.h) for other values that can be OR'ed together 
+</pre>
+
 This option controls what (if any) data gets sent to the event broker and, in turn, to any loaded event broker modules. This is an advanced option. When in doubt, either broker nothing (if not using event broker modules) or broker everything (if using event broker modules). Possible values are shown below.
 
-    0 = Broker nothing
-    -1 = Broker everything
-    # = See BROKER_* definitions in source code (include/broker.h) for other values that can be OR'ed together 
-
-表 5.119. Event Broker Modules
+119 Event Broker Modules
+<pre>
 格式：	broker_module=<modulepath> [moduleargs]
 样例：	
-
 broker_module=/path/to/nagios/bin/ndomod.o
-
 cfg_file=/path/to/nagios/etc/ndomod.cfg
+</pre>
 
 This directive is used to specify an event broker module that should by loaded by Nagios at startup. Use multiple directives if you want to load more than one module. Arguments that should be passed to the module at startup are seperated from the module path by a space.
 
@@ -1042,41 +1135,49 @@ The correct/safe way of updating a module is by using one of these methods:
     Shutdown Nagios, replace the module file, restart Nagios
     While Nagios is running... delete the original module file, move the new module file into place, restart Nagios
 
-表 5.120. 调试文件
+120 调试文件
+<pre>
 格式：	debug_file=<file_name>
 样例：	debug_file=/path/to/nagios/var/nagios.debug
+</pre>
 
 This option determines where Nagios should write debugging information. What (if any) information is written is determined by the debug_level and debug_verbosity options. You can have Nagios automaticaly rotate the debug file when it reaches a certain size by using the max_debug_file_size option.
 
-表 5.121. 调试等级
+121 调试等级
+<pre>
 格式：	debug_level=<#>
 样例：	debug_level=24
 
+-1 = Log everything
+0 = Log nothing (default)
+1 = Function enter/exit information
+2 = Config information
+4 = Process information
+8 = Scheduled event information
+16 = Host/service check information
+32 = Notification information
+64 = Event broker information 
+</pre>
+
 该选项决定Nagios将往debug_file文件里写入什么调试信息。下面值是可以逻辑或关系：
 
-    -1 = Log everything
-    0 = Log nothing (default)
-    1 = Function enter/exit information
-    2 = Config information
-    4 = Process information
-    8 = Scheduled event information
-    16 = Host/service check information
-    32 = Notification information
-    64 = Event broker information 
-
-表 5.122. Debug Verbosity
+122 Debug Verbosity
+<pre>
 格式：	debug_verbosity=<#>
 样例：	debug_verbosity=1
 
+0 = Basic information
+1 = More detailed information (default)
+2 = Highly detailed information 
+</pre>
+
 This option determines how much debugging information Nagios should write to the debug_filedebug_file.
 
-    0 = Basic information
-    1 = More detailed information (default)
-    2 = Highly detailed information 
-
-表 5.123. 调试文件最大长度
+123 调试文件最大长度
+<pre>
 格式：	max_debug_file_size=<#>
 样例：	max_debug_file_size=1000000
+</pre>
 
 该选项定义了以字节为单位的debug_file调试文件最大长度。如果文件增至大于该值，将会自动被命名为.old扩展名的文件，如果.old扩展名已经存在，那么旧.old文件将被删除。这可以保证在Nagios调试时磁盘空间不会过多占用而失控。
 

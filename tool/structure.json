@@ -6,6 +6,7 @@
       "daily_use_1": {"title": "常用操作1"},
       "daily_use_2": {"title": "常用操作2"},
       "daily_use_3": {"title": "常用操作3"},
+      "delete": {"title": "删除相关操作"},
       "manual": {
         "title": "Vim手册",
         "subElems": {
@@ -13,6 +14,14 @@
           "user_01": {"title": "操作"}
         }
       }
+    }
+  },
+  "git": {
+    "title": "git和github",
+    "subElems": {
+      "1_start": {"title": "git入门"},
+      "2_base": {"title": "git基础"},
+      "3_branch": {"title": "git分支"}
     }
   },
   "nagios": {

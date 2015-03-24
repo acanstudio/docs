@@ -1,6 +1,19 @@
 {
+  "high_mysql": {
+    "title": "高性能MySQL",
+    "subElems": {
+      "1_history": {"title": "MySQL历史和架构"},
+      "2_benchmark": {"title": "基准测试"},
+      "3_server": {"title": "服务器调优"},
+      "5_reference": {"title": "索引"},
+      "6_sql": {"title": "查询优化"}  
+    }
+  },
   "innodb_myisam": {
     "title": "InnoDB还是MyISAM"
+  },
+  "reference": {
+    "title": "MySQL索引汇总"
   },
   "performance_monitor": {
     "title": "MySQL性能监控"

@@ -20,62 +20,65 @@
 
 抽象类相关的示例：
 
-::
+<pre>
+<?php
+abstract class Car
+{
+    // common methods
 
-    <?php
-    abstract class Car
+    abstract function getMaximumSpeed();
+}
+
+class FastCar extends Car
+{
+    function getMaximumSpeed()
     {
-        // common methods
+        return 150;
+    }
+}
 
-	abstract function getMaximumSpeed();
+class Street
+{
+    protected $speedLimit;
+    protected $cars;
+
+    public function __construct($speedLimit = 200)
+    {
+        $this->cars = array();
+        $this->speedLimit = $speedLimit;
     }
 
-    class FastCar extends Car
+    protected function isStreetLegal($car)
     {
-        function getMaximumSpeed()
-	{
-	    return 150;
-	}
+        if ($car->getMaximumSpeed() < $this->speedLimit) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    class Street
+    public function addCar($car)
     {
-        protected $speedLimit;
-	protected $cars;
-
-	public function __construct($speedLimit = 200)
-	{
-	    $this->cars = array();
-	    $this->speedLimit = $speedLimit;
-	}
-
-	protected function isStreetLegal($car)
-	{
-	    if ($car->getMaximumSpeed() < $this->speedLimit) {
-	        return true;
-	    } else {
-	        return false;
-	    }
-	}
-
-	public function addCar($car)
-	{
-	    if ($this->isStreetLegal($car)) {
-	        echo 'The Car was allowed on the road.';
-		$this->cars[] = $car;
-	    } else {
-	        echo 'The Car is too fast and was not allowed on the road.';
-	    }
-	}
+        if ($this->isStreetLegal($car)) {
+            echo 'The Car was allowed on the road.';
+            $this->cars[] = $car;
+        } else {
+            echo 'The Car is too fast and was not allowed on the road.';
+        }
     }
+}
 
-    $street = new Street();
-    $street->addCar(new FastCar());
-
+$street = new Street();
+$street->addCar(new FastCar());
+</pre>
 
 
 接口
 ----------
+
+接口只能包含方法原型，不能包含任何完整定义了的方法，这可以防止使用抽象类时可能出现的方法冲突，从而能在给定的实现类上使用多个接口。定义和实现接口的关键字是**interface**和**implements**。实现接口的类必需全部实现接口里定义的方法原型，抽象类可以不实现。一个类可以实现多个接口，接口可以继承接口。接口在声明类必需遵循的规则时非常有用
+
+通常，在子类和父类之间存在有逻辑上的层次结构时，应该用抽象类；在希望支持差别较大的两个或者更多对象之间的特定交互行为时，使用接口。
 
 interfaceof操作符
 ---------------------
@@ -84,64 +87,65 @@ interfaceof是一个比较操作符，接受左右两个参数，并返回一个
 
 使用了instanceof的更强壮的代码
 
-::
+<pre>
+<?php
+abstract class Car
+{
+    // common methods
 
-    <?php
-    abstract class Car
+    abstract function getMaximumSpeed();
+}
+
+class FastCar extends Car
+{
+    function getMaximumSpeed()
     {
-        // common methods
+        return 150;
+    }
+}
 
-	abstract function getMaximumSpeed();
+class Street
+{
+    protected $speedLimit;
+    protected $cars;
+
+    public function __construct($speedLimit = 200)
+    {
+        $this->cars = array();
+        $this->speedLimit = $speedLimit;
     }
 
-    class FastCar extends Car
+    protected function isStreetLegal($car)
     {
-        function getMaximumSpeed()
-	{
-	    return 150;
-	}
+        if ($car instanceof ISpeedInfo) {
+            if ($car->getMaximumSpeed() < $this->speedLimit) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
-    class Street
+    public function addCar($car)
     {
-        protected $speedLimit;
-	protected $cars;
-
-	public function __construct($speedLimit = 200)
-	{
-	    $this->cars = array();
-	    $this->speedLimit = $speedLimit;
-	}
-
-	protected function isStreetLegal($car)
-	{
-	    if ($car instanceof ISpeedInfo) {
-	        if ($car->getMaximumSpeed() < $this->speedLimit) {
-	            return true;
-	        } else {
-	            return false;
-	        }
-	    } else {
-	        return false;
-	    }
-	}
-
-	public function addCar($car)
-	{
-	    if ($this->isStreetLegal($car)) {
-	        echo 'The Car was allowed on the road.';
-		$this->cars[] = $car;
-	    } else {
-	        echo 'The Car is too fast and was not allowed on the road.';
-	    }
-	}
+        if ($this->isStreetLegal($car)) {
+            echo 'The Car was allowed on the road.';
+            $this->cars[] = $car;
+        } else {
+            echo 'The Car is too fast and was not allowed on the road.';
+        }
     }
+}
 
-    $street = new Street();
-    $street->addCar(new FastCar());
+$street = new Street();
+$street->addCar(new FastCar());
+</pre>
 
-no契约式编程
+契约式编程
 ----------------------
 
-no小结
--------
+**契约式编程指在编写类之前实现声明接口的一种编程实践。保证类的封装性方面非常有用。**
+
+团队使用契约式编程可以显著改善流程，在实现类之前定义好类之间的交互行为，使团队成员明确知道对象必须实现什么行为。接口被完整实现之后，累的测试就只需要使用定义在接口上的规则就可以进行了。

@@ -3,7 +3,6 @@
     "title": "基本概念",
     "subElems": {
       "abstract_interface": {"title": "抽象类和接口"},
-      "exception": {"title": "异常"},
       "php6_feature": {"title": "PHP6新特性"},
       "single_factory": {"title": "简单工厂模式"},
       "static": {"title": "静态属性"}
@@ -13,14 +12,10 @@
     "title": "进阶",
     "subElems": {
       "arrayaccess": {"title": "ArrayAccess类"},
-      "closure": {"title": "匿名函数和闭包"},
-      "cookie_session": {"title": "COOKIE和SESSION"},
       "exception": {"title": "异常"},
       "file_dir": {"title": "文件和目录类"},
-      "http": {"title": "HTTP协议"},
       "iterator": {"title": "迭代"},
-      "mysql_pconnect": {"title": "链接MySQL"},
-      "spl": {"title": "SQL"}
+      "spl": {"title": "SPL"}
     }
   },
   "other": {
@@ -30,13 +25,9 @@
       "cookie_session": {"title": "COOKIE和SESSION"},
       "debug": {"title": "调试"},
       "http": {"title": "HTTP协议"},
+      "orm1": {"title": "ORM基础"},
+      "mysqlso_pdo": {"title": "使用PDO"},
       "mysql_pconnect": {"title": "链接MySQL"}
     }
-  },
-  "static_method": {
-    "title": "静态方法"
-  },
-  "index": {
-    "title": "Web架构概述"
   }
 }

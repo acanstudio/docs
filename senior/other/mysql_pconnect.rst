@@ -22,12 +22,13 @@ PHP的MySQL连接
 -----------------
 
 那么，PHP的MySQL连接资源是怎么被hold住的呢，这需要查看PHP的mysql_pconnect的函数代码，我看了下，大概的做法就是mysql_pconnect根据当前Apache进程号，生成hash key，找hash表内有无对应的连接资源，没有则推入hash表，有则直接使用。有些代码片段可以说明(具体可查看PHP5.3.8源码ext/mysql/PHP_mysql.c文件690行PHP_mysql_do_connect函数)
+<pre>
 01	#1.生成hash key
 02	user=php_get_current_user();//获取当前PHP执行者(Apache)的进程唯一标识号
 03	//hashed_details就是hash key
 04	hashed_details_length = spprintf(&hashed_details, 0, "MySQL__%s_", user);
 05	#2.如果未找到已有资源，就推入hash表，名字叫persistent_list，如果找到就直接使用
-06	/* try to find if we already have this link in our persistent list */
+06	/ try to find if we already have this link in our persistent list */
 07	if (zend_hash_find(&EG(persistent_list), hashed_details, hashed_details_length+1, (void **) &le)==FAILURE) { 
 08	    /* we don't */
 09	    ...
@@ -48,6 +49,7 @@ PHP的MySQL连接
 24	        ...
 25	        ...
 26	    }
+</pre>
 
 zend_hash_find比较容易看明白，原型是zend_hash_find(hash表,key名,key长,value);如果找到，value就有值了。
 

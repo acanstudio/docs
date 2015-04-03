@@ -26,6 +26,7 @@
       "debug": {"title": "调试"},
       "http": {"title": "HTTP协议"},
       "orm1": {"title": "ORM基础"},
+      "reference": {"title": "PHP引用"},
       "mysqlso_pdo": {"title": "使用PDO"},
       "mysql_pconnect": {"title": "链接MySQL"}
     }

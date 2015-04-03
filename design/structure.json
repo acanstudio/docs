@@ -7,7 +7,10 @@
       "LOD": {"title": "迪米特法则"},
       "LSP": {"title": "里氏替换原则"},
       "OCP": {"title": "开放封闭原则"},
-      "SPR": {"title": "单一职责原则"}
+      "SPR": {"title": "单一职责原则"},
+      "DIC": {"title": "依赖注入容器"},
+      "IoC": {"title": "控制反转"},
+      "DIC_IoC": {"title": "DIC与IoC"}
     }
   },
   "designPattern": {

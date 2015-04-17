@@ -26,5 +26,9 @@
     "tool": {
       "title": "工具文档",
       "description": "开发或学习过程中使用到的辅助性"
+    },
+    "vim": {
+      "title": "Vim",
+      "description": "可以使用一辈子的编辑器"
     }
 }

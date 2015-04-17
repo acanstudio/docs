@@ -21,6 +21,7 @@ github库
 | SimplePHP           | PHP轻量级框架              | https://github.com/starlight36/SimplePHP
 | Zf2TrainingExamples | Zf2实例                    | https://github.com/lepermessiah57/Zf2TrainingExamples
 | libra-cms           | Zf2实例                    | https://github.com/libracms/libra-cms
+| learnzf2            | Zf2实例                    | https://github.com/slaff/learnzf2
 
 | parsedown           | PHP解析markdown库          | https://github.com/erusev/parsedown
 | whoops              | PHP错误处理工具            | https://github.com/filp/whoops

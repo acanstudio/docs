@@ -1,24 +1,15 @@
 {
-  "vim": {
-    "title": "Vim使用心得",
-    "subElems": {
-      "base": {"title": "vim基本操作"},
-      "daily_use_1": {"title": "常用操作1"},
-      "daily_use_2": {"title": "常用操作2"},
-      "daily_use_3": {"title": "常用操作3"},
-      "delete": {"title": "删除相关操作"},
-      "manual": {
-        "title": "Vim手册",
-        "subElems": {
-          "base": {"title": "Vim基础"},
-          "user_01": {"title": "操作"}
-        }
-      }
-    }
-  },
   "git": {
     "title": "git和github",
     "subElems": {
+      "step_desc": {"title": "step简介"},
+      "step_local": {"title": "step基本操作"},
+      "step_sha1": {"title": "step对象模型"},
+      "step_gitpath": {"title": "step-git目录"},
+      "step_branch": {"title": "step分支"},
+      "step_remote": {"title": "step远程仓库1"},
+      "step_remote2": {"title": "step远程仓库2"},
+      "step_merge_rebase": {"title": "step-merge和rebase"},
       "1_start": {"title": "git入门"},
       "2_base": {"title": "git基础"},
       "3_branch": {"title": "git分支"}

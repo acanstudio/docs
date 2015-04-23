@@ -10,7 +10,8 @@
     "title": "Vim手册",
     "subElems": {
       "base": {"title": "Vim基础"},
-      "user_01": {"title": "操作"}
+      "help": {"title": "doc-help"},
+      "usr_01": {"title": "关于手册"}
     }
   },
   "ide": {

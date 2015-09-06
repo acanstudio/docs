@@ -30,5 +30,9 @@
     "vim": {
       "title": "Vim",
       "description": "可以使用一辈子的编辑器"
+    },
+    "techblog": {
+      "title": "techblog",
+      "description": "网络上技术博客报备"
     }
 }

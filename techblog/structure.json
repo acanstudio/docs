@@ -1,0 +1,25 @@
+{
+  "php": {
+    "title": "PHP网络文摘",
+    "subElems": {
+      "53new": {"title": "5.3版本后的新特性"},
+      "help": {"title": "doc-help"},
+      "usr_01": {"title": "关于手册"}
+    }
+  },
+  "ide": {
+    "title": "基于Vim的IDE",
+    "subElems": {
+      "color": {"title": "Vim配色"},
+      "minibuf": {"title": "miniBuf"},
+      "nerdtree": {"title": "文件目录管理"},
+      "powerline": {"title": "状态栏"},
+      "winmanager": {"title": "多窗口管理"},
+      "taglist": {"title": "标签管理"},
+      "ctags": {"title": "ctags命令"},
+      "escope": {"title": "escope"},
+      "vdebug": {"title": "vdebug"},
+      "bufexplorer": {"title": "文件缓存"}
+    }
+  }
+}
